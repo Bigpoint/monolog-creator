@@ -1,0 +1,24 @@
+{
+    "name": "libraries/logger",
+    "authors": [
+        {
+            "name": "Peter Ahrens",
+            "email": "pahrens@bigpoint.net"
+        }
+    ],
+    "repositories": {
+        "bigpoint": {
+            "type": "composer",
+            "url": "https://packagist.bigpoint.net/"
+        }
+    },
+    "require": {
+        "php": ">=5.4.4",
+        "monolog/monolog": "1.11.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Logger\\": ["src/", "tests/"]
+        }
+    }
+}
