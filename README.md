@@ -1,5 +1,8 @@
 # Logger
 
+This logger provides a factory for monolog loggers, which are configurable via
+array configuration.
+
 ## example configuration
 
 ```
