@@ -8,7 +8,7 @@ array configuration.
 ```
 "monolog": {
     "handler" : {
-        "file" : {
+        "stream" : {
             "path" : "./app.log",
             "level" : "INFO"
         },
@@ -16,25 +16,33 @@ array configuration.
             "host"       : "192.168.50.48",
             "port"       : "9999",
             "level"      : "INFO",
-            "formatter"  : "logstash",
-            "processors" : ["web"]
+            "formatter"  : "logstash"
+        }
+    },
+    "formatter" : {
+        "logstash" : {
+            "type" : "partner-integration-televisa"
         }
     },
     "logger" : {
+        "_default" : {
+            "handler" : ["stream"],
+            "level" : "WARNING"
+        }
         "integration" : {
-            "handler" : ["file", "udp"],
+            "handler" : ["stream", "udp"],
             "level" : "INFO"
         },
         "caller" : {
-            "handler" : ["file", "udp"],
+            "handler" : ["stream", "udp"],
             "level" : "INFO"
         },
         "detector" : {
-            "handler" : ["file", "udp"],
+            "handler" : ["stream", "udp"],
             "level" : "INFO"
         },
         "controller" : {
-            "handler" : ["file", "udp"],
+            "handler" : ["stream", "udp"],
             "level" : "INFO"
         }
     }

@@ -28,6 +28,12 @@ class Factory
     );
 
     /**
+     * saves already created loggers
+     * @var array
+     */
+    private $_logger = array();
+
+    /**
      *
      * @param array $config
      */
@@ -43,19 +49,24 @@ class Factory
      */
     public function createLogger($name)
     {
-        $logger = new \Monolog\Logger($name);
+        // check if logger already exits
+        if (true === array_key_exists($name, $this->_logger)) {
+            return $this->_logger[$name];
+        }
 
         if (false === array_key_exists('logger', $this->_config)) {
             throw new Logger\Exception("no logger configuration found");
         }
 
-        if (false === array_key_exists($name, $this->_config['logger'])) {
-            throw new Logger\Exception(
-                "no logger configuration found for: " . $name
-            );
+        if (false === array_key_exists('_default', $this->_config['logger'])) {
+            throw new Logger\Exception("no configuration found for logger: _default");
         }
 
-        $loggerConfig  = $this->_config['logger'][$name];
+        $loggerConfig = $this->_config['logger']['_default'];
+
+        if (true === array_key_exists($name, $this->_config['logger'])) {
+            $loggerConfig  = $this->_config['logger'][$name];
+        }
 
         if (false === array_key_exists('handler', $loggerConfig)) {
             throw new Logger\Exception(
@@ -75,6 +86,8 @@ class Factory
             );
         }
 
+        $logger = new \Monolog\Logger($name);
+
         // add handler
         foreach ($loggerConfig['handler'] as $handlerType) {
             $handler = $this->_createHandler(
@@ -84,23 +97,10 @@ class Factory
             $logger->pushHandler($handler);
         }
 
+        // cache created logger
+        $this->_logger[$name] = $logger;
+
         return $logger;
-
-        // $udpHandler = new Logger\Handler\Udp('192.168.50.48', '9999', \Monolog\Logger::INFO);
-        // $udpHandler->pushProcessor(new \Monolog\Processor\WebProcessor());
-        // $udpHandler->setFormatter(
-        //     new \Monolog\Formatter\LogstashFormatter(
-        //         'televisa',
-        //         null,
-        //         null,
-        //         'ctxt_',
-        //         \Monolog\Formatter\LogstashFormatter::V1
-        //     )
-        // );
-        // $logger->pushHandler($udpHandler);
-
-        // // register logger as php error handler
-        // \Monolog\ErrorHandler::register($logger);
     }
 
     /**
@@ -129,24 +129,113 @@ class Factory
             );
         }
 
+        $handler = null;
         $handlerConfig = $this->_config['handler'][$handlerType];
 
+        // evaluate handler
         if ('stream' === $handlerType) {
+            $handler = $this->_createStreamhandler($handlerConfig, $level);
 
-            if (false === array_key_exists('path', $handlerConfig)) {
-                throw new Exception(
-                    'path configuration for stream handler is missing'
-                );
-            }
+        } else if ('udp' === $handlerType) {
+            $handler = $this->_createUdphandler($handlerConfig, $level);
 
-            return new \Monolog\Handler\StreamHandler(
-                $handlerConfig['path'],
-                $this->_levels[$level]
+        } else {
+            throw new Exception(
+                'handler type: ' . $handlerType . ' is not supported'
             );
         }
 
+        // set formatter
+        if (true === array_key_exists('formatter', $handlerConfig)) {
+            $handler->setFormatter($this->_createFormatter($handlerConfig['formatter']));
+        }
+
+        return $handler;
+    }
+
+    /**
+     *
+     * @param  array  $handlerConfig
+     * @param  string $level
+     * @return \Monolog\Handler\StreamHandler
+     */
+    private function _createStreamHandler(array $handlerConfig, $level)
+    {
+        if (false === array_key_exists('path', $handlerConfig)) {
+            throw new Exception(
+                'path configuration for stream handler is missing'
+            );
+        }
+
+        return new \Monolog\Handler\StreamHandler(
+            $handlerConfig['path'],
+            $this->_levels[$level]
+        );
+    }
+
+    /**
+     *
+     * @param  array  $handlerConfig
+     * @param  string $level
+     * @return \Logger\Handler\UdpHandler
+     */
+    private function _createUdpHandler(array $handlerConfig, $level)
+    {
+        return new Logger\Handler\Udp(
+            $handlerConfig['host'],
+            $handlerConfig['port'],
+            $this->_levels[$level]
+        );
+    }
+
+    /**
+     * @param  string $formatterType
+     * @return \Monolog\Formatter\FormatterInterface
+     */
+    private function _createFormatter($formatterType)
+    {
+        if (false === array_key_exists('formatter', $this->_config)) {
+            throw new Exception(
+                'no formatter configuration found'
+            );
+        }
+
+        if (false === array_key_exists($formatterType, $this->_config['formatter'])) {
+            throw new Exception(
+                'no formatter configuration found for formatterType: '
+                . $formatterType
+            );
+        }
+
+        $formatterConfig = $this->_config['formatter'][$formatterType];
+
+        if ('logstash' === $formatterType) {
+            return $this->_createLogstashFormatter($formatterConfig);
+        }
+
         throw new Exception(
-            'handler type: ' . $handlerType . ' is not supported'
+            'formatter type: ' . $formatterType . ' is not supported'
+        );
+    }
+
+    /**
+     * @param  array $formatterConfig
+     * @return \Monolog\Formatter\LogstashFormatter
+     */
+    private function _createLogstashFormatter(array $formatterConfig)
+    {
+        if (false === array_key_exists('type', $formatterConfig)) {
+            throw new Exception(
+                'type configuration for logstash foramtter is missing'
+            );
+        }
+
+        return new \Monolog\Formatter\LogstashFormatter(
+            $formatterConfig['type'],
+            null,
+            null,
+            'ctxt_',
+            \Monolog\Formatter\LogstashFormatter::V1
         );
     }
 }
