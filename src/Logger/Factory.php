@@ -154,7 +154,6 @@ class Factory
     }
 
     /**
-     *
      * @param  array  $handlerConfig
      * @param  string $level
      * @return \Monolog\Handler\StreamHandler
@@ -174,16 +173,19 @@ class Factory
     }
 
     /**
-     *
      * @param  array  $handlerConfig
      * @param  string $level
      * @return \Logger\Handler\UdpHandler
      */
     private function _createUdpHandler(array $handlerConfig, $level)
     {
-        return new Logger\Handler\Udp(
+        $socket = new \Monolog\Handler\SyslogUdp\UdpSocket(
             $handlerConfig['host'],
-            $handlerConfig['port'],
+            $handlerConfig['port']
+        );
+
+        return new Logger\Handler\Udp(
+            $socket,
             $this->_levels[$level]
         );
     }

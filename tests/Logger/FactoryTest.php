@@ -449,10 +449,10 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
     //     $configString = '{
     //         "handler" : {
     //             "udp" : {
-    //                 "host"       : "192.168.50.48",
-    //                 "port"       : "9999",
-    //                 "level"      : "INFO",
-    //                 "formatter"  : "logstash"
+    //                 "host"      : "192.168.50.48",
+    //                 "port"      : "9999",
+    //                 "level"     : "INFO",
+    //                 "formatter" : "logstash"
     //             }
     //         },
     //         "logger" : {
