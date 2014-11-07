@@ -179,14 +179,37 @@ class Factory
      */
     private function _createUdpHandler(array $handlerConfig, $level)
     {
-        $socket = new \Monolog\Handler\SyslogUdp\UdpSocket(
-            $handlerConfig['host'],
-            $handlerConfig['port']
-        );
+        if (false === array_key_exists('host', $handlerConfig)) {
+            throw new Exception(
+                'host configuration for udp handler is missing'
+            );
+        }
+
+        if (false === array_key_exists('port', $handlerConfig)) {
+            throw new Exception(
+                'port configuration for udp handler is missing'
+            );
+        }
 
         return new Logger\Handler\Udp(
-            $socket,
+            $this->_createUdpSocket(
+                $handlerConfig['host'],
+                $handlerConfig['port']
+            ),
             $this->_levels[$level]
+        );
+    }
+
+    /**
+     * @param  string $host
+     * @param  int $port
+     * @return \Monolog\Handler\SyslogUdp\UdpSocket
+     */
+    protected function _createUdpSocket($host, $port)
+    {
+        return new \Monolog\Handler\SyslogUdp\UdpSocket(
+            $host,
+            $port
         );
     }
 

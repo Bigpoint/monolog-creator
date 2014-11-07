@@ -444,42 +444,144 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($testLogger1 === $testLogger2);
     }
 
-    // public function testCreateUdpLogger()
-    // {
-    //     $configString = '{
-    //         "handler" : {
-    //             "udp" : {
-    //                 "host"      : "192.168.50.48",
-    //                 "port"      : "9999",
-    //                 "level"     : "INFO",
-    //                 "formatter" : "logstash"
-    //             }
-    //         },
-    //         "logger" : {
-    //             "_default" : {
-    //                 "handler" : ["udp"],
-    //                 "level" : "WARNING"
-    //             },
-    //             "test" : {
-    //                 "handler" : ["udp"],
-    //                 "level" : "INFO"
-    //             }
-    //         }}'
-    //     ;
+    public function testCreateUdpLogger()
+    {
+        $configString = '{
+            "handler" : {
+                "udp" : {
+                    "host"      : "192.168.50.48",
+                    "port"      : 9999,
+                    "level"     : "INFO",
+                    "formatter" : "logstash"
+                }
+            },
+            "formatter" : {
+                "logstash" : {
+                    "type" : "test"
+                }
+            },
+            "logger" : {
+                "_default" : {
+                    "handler" : ["udp"],
+                    "level" : "WARNING"
+                },
+                "test" : {
+                    "handler" : ["udp"],
+                    "level" : "INFO"
+                }
+            }}'
+        ;
 
-    //     $config = json_decode($configString, true);
-    //     $loggerName = 'test';
+        $config = json_decode($configString, true);
+        $loggerName = 'test';
 
-    //     $loggerFactory = new Factory($config);
-    //     $testLogger = $loggerFactory->createLogger($loggerName);
+        // mock factory and udp socket
+        $mockFactory = $this->getMock(
+            '\Logger\Factory',
+            array('_createUdpSocket'),
+            array($config)
+        );
 
-    //     // check object
-    //     $this->assertTrue($testLogger instanceof \Monolog\Logger);
-    //     $this->assertEquals($loggerName, $testLogger->getName());
+        $mockSocket = $this->getMock(
+            '\Monolog\Handler\SyslogUdp\UdpSocket',
+            array(),
+            array(),
+            '',
+            false
+        );
 
-    //     // check handler
-    //     $handlers = $testLogger->getHandlers();
-    //     $this->assertEquals(1, count($handlers));
-    //     $this->assertTrue($handlers[0] instanceof \Logger\Handler\Udp);
-    // }
+        $mockFactory->expects($this->exactly(1))
+            ->method('_createUdpSocket')
+            ->with(
+                $this->equalTo('192.168.50.48'),
+                $this->equalTo(9999)
+            )
+            ->will($this->returnValue($mockSocket));
+
+        $testLogger = $mockFactory->createLogger($loggerName);
+
+        // check object
+        $this->assertTrue($testLogger instanceof \Monolog\Logger);
+        $this->assertEquals($loggerName, $testLogger->getName());
+
+        // check handler
+        $handlers = $testLogger->getHandlers();
+        $this->assertEquals(1, count($handlers));
+        $this->assertTrue($handlers[0] instanceof \Logger\Handler\Udp);
+    }
+
+
+    /**
+     *
+     * @param string $configString
+     *
+     * @expectedException Logger\Exception
+     * @dataProvider dataProviderCreateUdpLoggerFail
+     */
+    public function testCreateUdpLoggerFail($configString)
+    {
+        $config = json_decode($configString, true);
+        $loggerName = 'test';
+
+        $factory = new Factory($config);
+        $testLogger = $factory->createLogger($loggerName);
+    }
+
+    public function dataProviderCreateUdpLoggerFail()
+    {
+        return array(
+            // missing host key
+            array(
+                '{
+                "handler" : {
+                    "udp" : {
+                        "port"      : 9999,
+                        "level"     : "INFO",
+                        "formatter" : "logstash"
+                    }
+                },
+                "formatter" : {
+                    "logstash" : {
+                        "type" : "test"
+                    }
+                },
+                "logger" : {
+                    "_default" : {
+                        "handler" : ["udp"],
+                        "level" : "WARNING"
+                    },
+                    "test" : {
+                        "handler" : ["udp"],
+                        "level" : "INFO"
+                    }
+                }}'
+            ),
+            // missing port key
+            array(
+                '{
+                "handler" : {
+                    "udp" : {
+                        "host"      : "127.0.0.1",
+                        "level"     : "INFO",
+                        "formatter" : "logstash"
+                    }
+                },
+                "formatter" : {
+                    "logstash" : {
+                        "type" : "test"
+                    }
+                },
+                "logger" : {
+                    "_default" : {
+                        "handler" : ["udp"],
+                        "level" : "WARNING"
+                    },
+                    "test" : {
+                        "handler" : ["udp"],
+                        "level" : "INFO"
+                    }
+                }}'
+            )
+        );
+    }
 }
