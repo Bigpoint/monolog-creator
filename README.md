@@ -14,8 +14,7 @@ You have to configurate at least the _default logger and one handler.
 {
     "handler" : {
         "stream" : {
-            "path" : "./app.log",
-            "level" : "INFO"
+            "path" : "./app.log"
         }
     },
 
@@ -44,8 +43,7 @@ another log level or handler.
 {
     "handler" : {
         "stream" : {
-            "path" : "./app.log",
-            "level" : "INFO"
+            "path" : "./app.log"
         }
     },
 
@@ -78,7 +76,6 @@ You can configure the log output at handle via formatter
     "handler" : {
         "stream" : {
             "path" : "./app.log",
-            "level" : "INFO",
             "formatter" : "logstash"
         }
     },
@@ -107,8 +104,7 @@ You can configure the log output at handle via formatter
 ```
 "handler" : {
     "stream" : {
-        "path" : "./app.log",
-        "level" : "INFO"
+        "path" : "./app.log"
     }
 }
 ```
@@ -118,8 +114,7 @@ You can configure the log output at handle via formatter
 "handler" : {
     "udp" : {
         "host"       : "192.168.50.48",
-        "port"       : "9999",
-        "level"      : "INFO"
+        "port"       : "9999"
     }
 }
 ```
