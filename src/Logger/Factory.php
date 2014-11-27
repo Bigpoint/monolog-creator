@@ -1,5 +1,4 @@
 <?php
-
 namespace Logger;
 use Logger;
 
@@ -43,6 +42,8 @@ class Factory
     }
 
     /**
+     * @param string $name
+     *
      * @return \Monolog\Logger
      *
      * @throws Logger\Exception
@@ -54,24 +55,64 @@ class Factory
             return $this->_logger[$name];
         }
 
+        $loggerConfig = $this->_getLoggerConfig($name);
+        $handlers     = $this->createHandlers($loggerConfig);
+        $logger       = new \Monolog\Logger($name, $handlers);
+
+        // cache created logger
+        $this->_logger[$name] = $logger;
+
+        return $logger;
+    }
+
+    /**
+     * @param array  $loggerConfig
+     *
+     * @return array
+     *
+     * @throws Logger\Exception
+     */
+    public function createHandlers(array $loggerConfig)
+    {
+        if (false === array_key_exists('handler', $this->_config)) {
+            throw new Logger\Exception("no handler configuration found");
+        }
+
+        $handlers = array();
+
+        foreach ($this->_config['handler'] as $handlerType => $data) {
+            $handlers[] = $this->_createHandler(
+                $handlerType,
+                $loggerConfig
+            );
+        }
+
+        return $handlers;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return array
+     *
+     * @throws Logger\Exception
+     */
+    private function _getLoggerConfig($name)
+    {
         if (false === array_key_exists('logger', $this->_config)) {
             throw new Logger\Exception("no logger configuration found");
         }
 
         if (false === array_key_exists('_default', $this->_config['logger'])) {
-            throw new Logger\Exception("no configuration found for logger: _default");
+            throw new Logger\Exception(
+                "no configuration found for logger: _default"
+            );
         }
 
         $loggerConfig = $this->_config['logger']['_default'];
 
         if (true === array_key_exists($name, $this->_config['logger'])) {
             $loggerConfig  = $this->_config['logger'][$name];
-        }
-
-        if (false === array_key_exists('handler', $loggerConfig)) {
-            throw new Logger\Exception(
-                "no handler configurated for logger: " . $name
-            );
         }
 
         if (false === array_key_exists('level', $loggerConfig)) {
@@ -86,21 +127,7 @@ class Factory
             );
         }
 
-        $logger = new \Monolog\Logger($name);
-
-        // add handler
-        foreach ($loggerConfig['handler'] as $handlerType) {
-            $handler = $this->_createHandler(
-                $handlerType,
-                $loggerConfig['level']
-            );
-            $logger->pushHandler($handler);
-        }
-
-        // cache created logger
-        $this->_logger[$name] = $logger;
-
-        return $logger;
+        return $loggerConfig;
     }
 
     /**
