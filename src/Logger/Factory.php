@@ -1,7 +1,8 @@
 <?php
 namespace Logger;
 
-use Logger;
+use \Logger;
+use \Monolog;
 
 /**
  * Factory class to for creating monolog loggers via configuration array
@@ -17,14 +18,14 @@ class Factory
      * @var array
      */
     private $_levels = array(
-        'DEBUG'     => \Monolog\Logger::DEBUG,
-        'INFO'      => \Monolog\Logger::INFO,
-        'NOTICE'    => \Monolog\Logger::NOTICE,
-        'WARNING'   => \Monolog\Logger::WARNING,
-        'ERROR'     => \Monolog\Logger::ERROR,
-        'CRITICAL'  => \Monolog\Logger::CRITICAL,
-        'ALERT'     => \Monolog\Logger::ALERT,
-        'EMERGENCY' => \Monolog\Logger::EMERGENCY,
+        'DEBUG'     => Monolog\Logger::DEBUG,
+        'INFO'      => Monolog\Logger::INFO,
+        'NOTICE'    => Monolog\Logger::NOTICE,
+        'WARNING'   => Monolog\Logger::WARNING,
+        'ERROR'     => Monolog\Logger::ERROR,
+        'CRITICAL'  => Monolog\Logger::CRITICAL,
+        'ALERT'     => Monolog\Logger::ALERT,
+        'EMERGENCY' => Monolog\Logger::EMERGENCY,
     );
 
     /**
@@ -45,7 +46,7 @@ class Factory
     /**
      * @param string $name
      *
-     * @return \Monolog\Logger
+     * @return Monolog\Logger
      *
      * @throws Logger\Exception
      */
@@ -58,7 +59,12 @@ class Factory
 
         $loggerConfig  = $this->_getLoggerConfig($name);
         $handlers      = $this->createHandlers($loggerConfig);
-        $logger        = new \Monolog\Logger($name, $handlers);
+        $processors    = $this->createProcessors($loggerConfig);
+        $logger        = new Monolog\Logger(
+            $name,
+            $handlers,
+            $processors
+        );
 
         // cache created logger
         $this->_logger[$name] = $logger;
@@ -85,6 +91,30 @@ class Factory
         }
 
         return $handlers;
+    }
+
+    /**
+     * @param array $loggerConfig
+     *
+     * @return array
+     */
+    public function createProcessors(array $loggerConfig)
+    {
+        $processors = array();
+
+        if (false === array_key_exists('processors', $loggerConfig)
+            || false === is_array($loggerConfig['processors'])
+        ) {
+            return $processors;
+        }
+
+        foreach ($loggerConfig['processors'] as $processor) {
+            if ('web' === $processor) {
+                $processors[] = new Monolog\Processor\WebProcessor();
+            }
+        }
+
+        return $processors;
     }
 
     /**
@@ -139,7 +169,7 @@ class Factory
      * @param string $handlerType
      * @param string $level
      *
-     * @return \Monolog\Handler\HandlerInterface
+     * @return Monolog\Handler\HandlerInterface
      *
      * @throws Logger\Exception
      */
@@ -191,7 +221,7 @@ class Factory
      * @param  array  $handlerConfig
      * @param  string $level
      *
-     * @return \Monolog\Handler\StreamHandler
+     * @return Monolog\Handler\StreamHandler
      *
      * @throws Logger\Exception
      */
@@ -203,7 +233,7 @@ class Factory
             );
         }
 
-        return new \Monolog\Handler\StreamHandler(
+        return new Monolog\Handler\StreamHandler(
             $handlerConfig['path'],
             $this->_levels[$level]
         );
@@ -242,14 +272,15 @@ class Factory
 
     /**
      * @param  string $host
-     * @param  int $port
-     * @return \Monolog\Handler\SyslogUdp\UdpSocket
+     * @param  int    $port
+     *
+     * @return Monolog\Handler\SyslogUdp\UdpSocket
      *
      * @codeCoverageIgnore
      */
     protected function _createUdpSocket($host, $port)
     {
-        return new \Monolog\Handler\SyslogUdp\UdpSocket(
+        return new Monolog\Handler\SyslogUdp\UdpSocket(
             $host,
             $port
         );
@@ -258,7 +289,7 @@ class Factory
     /**
      * @param  string $formatterType
      *
-     * @return \Monolog\Formatter\FormatterInterface
+     * @return Monolog\Formatter\FormatterInterface
      *
      * @throws Logger\Exception
      */
@@ -291,7 +322,7 @@ class Factory
     /**
      * @param  array $formatterConfig
      *
-     * @return \Monolog\Formatter\LogstashFormatter
+     * @return Monolog\Formatter\LogstashFormatter
      *
      * @throws Logger\Exception
      */
@@ -303,12 +334,12 @@ class Factory
             );
         }
 
-        return new \Monolog\Formatter\LogstashFormatter(
+        return new Monolog\Formatter\LogstashFormatter(
             $formatterConfig['type'],
             null,
             null,
             'ctxt_',
-            \Monolog\Formatter\LogstashFormatter::V1
+            Monolog\Formatter\LogstashFormatter::V1
         );
     }
 }
