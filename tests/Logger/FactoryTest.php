@@ -265,7 +265,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $configString
      *
-     * @expectedException Logger\Exception
+     * @expectedException \Logger\Exception
      * @dataProvider dataProviderCreateStreamLoggerFail
      */
     public function testCreateStreamLoggerFail($configString)
@@ -583,5 +583,123 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
                 }}'
             )
         );
+    }
+
+    /**
+     * @expectedException \Logger\Exception
+     * @expectedExceptionMessage formatter type: mockFomatter is not supported
+     */
+    public function testCreateFormatterFail()
+    {
+        $config = json_decode(
+            '{
+                "handler" : {
+                    "udp" : {
+                        "host"      : "192.168.50.48",
+                        "port"      : 9999,
+                        "level"     : "INFO",
+                        "formatter" : "mockFomatter"
+                    }
+                },
+                "formatter" : {
+                    "mockFomatter" : {
+                        "type" : "test"
+                    }
+                },
+                "logger" : {
+                    "_default" : {
+                        "handler" : ["udp"],
+                        "level" : "WARNING"
+                    },
+                    "test" : {
+                        "handler" : ["udp"],
+                        "level" : "INFO"
+                    }
+                }
+            }',
+            true
+        );
+        $loggerName = 'test';
+
+        $factory = new Factory($config);
+        $factory->createLogger($loggerName);
+    }
+
+    public function testCreateLoggerWithProcessor()
+    {
+        $config = json_decode(
+            '{
+                "handler" : {
+                    "udp" : {
+                        "host"      : "192.168.50.48",
+                        "port"      : 9999,
+                        "level"     : "INFO",
+                        "formatter" : "logstash"
+                    }
+                },
+                "formatter" : {
+                    "logstash" : {
+                        "type" : "test"
+                    }
+                },
+                "logger" : {
+                    "_default" : {
+                        "handler" : ["udp"],
+                        "level" : "WARNING"
+                    },
+                    "test" : {
+                        "handler" : ["udp"],
+                        "processors": ["web"],
+                        "level" : "INFO"
+                    }
+                }
+            }',
+            true
+        );
+        $loggerName = 'test';
+
+        $factory = new Factory($config);
+        $factory->createLogger($loggerName);
+    }
+
+    /**
+     * @expectedException \Logger\Exception
+     * @expectedExceptionMessage processor type: mockProccessor is not supported
+     */
+    public function testCreateLoggerWithProcessorFail()
+    {
+        $config = json_decode(
+            '{
+                "handler" : {
+                    "udp" : {
+                        "host"      : "192.168.50.48",
+                        "port"      : 9999,
+                        "level"     : "INFO",
+                        "formatter" : "logstash"
+                    }
+                },
+                "formatter" : {
+                    "logstash" : {
+                        "type" : "test"
+                    }
+                },
+                "logger" : {
+                    "_default" : {
+                        "handler" : ["udp"],
+                        "level" : "WARNING"
+                    },
+                    "test" : {
+                        "handler" : ["udp"],
+                        "processors": ["mockProccessor"],
+                        "level" : "INFO"
+                    }
+                }
+            }',
+            true
+        );
+        $loggerName = 'test';
+
+        $factory = new Factory($config);
+        $factory->createLogger($loggerName);
     }
 }
