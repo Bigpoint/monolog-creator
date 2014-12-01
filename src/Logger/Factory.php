@@ -97,6 +97,8 @@ class Factory
      * @param array $loggerConfig
      *
      * @return array
+     *
+     * @throws Logger\Exception
      */
     public function createProcessors(array $loggerConfig)
     {
@@ -114,6 +116,10 @@ class Factory
                 $webProcessor->addExtraField('user_agent', 'HTTP_USER_AGENT');
 
                 $processors[] = $webProcessor;
+            } else {
+                throw new Logger\Exception(
+                    'processor type: ' . $processor . ' is not supported'
+                );
             }
         }
 
