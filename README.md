@@ -97,6 +97,22 @@ You can configure the log output at handle via formatter
 }
 ```
 
+##### optional processors
+
+You can optionally add processors to your logger
+
+```
+{
+    "logger" : {
+        "test" : {
+            "handler" : ["stream"],
+            "processors" : ["web"],
+            "level" : "DEBUG"
+        }
+    }
+}
+```
+
 
 ### supported handler:
 
@@ -119,6 +135,7 @@ You can configure the log output at handle via formatter
 }
 ```
 
+
 ### supported formatter:
 
 ##### LogstashFormatter
@@ -129,3 +146,10 @@ You can configure the log output at handle via formatter
     }
 }
 ```
+
+
+### supported processors:
+
+##### WebProcessors
+
+Adds the current request URI, request method, client IP and user agent to a log record.
