@@ -13,7 +13,7 @@
         }
     },
     "require": {
-        "php": ">=5.4.4",
+        "php": ">=5.3.3",
         "monolog/monolog": "1.11.0"
     },
     "autoload": {
