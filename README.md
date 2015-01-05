@@ -1,8 +1,8 @@
-# Logger
+# Monolog-Creator
 
-This logger provides a factory for creating [monolog](https://github.com/Seldaek/monolog) logger objects. The composition of monologs handler and formatter is configurable via an configuration array.
+This classes provides a simple factory for creating pre configurated [monolog](https://github.com/Seldaek/monolog) logger objects.
 
-The Factory wraps not much handler and formatter from monolog at the moment. So feel free to extend the library.
+Monolog-Creator supports not much handler, formatter and processor from monolog at the moment. So feel free to extend the library.
 
 ### examples
 
@@ -10,7 +10,8 @@ The Factory wraps not much handler and formatter from monolog at the moment. So 
 
 You have to configurate at least the _default logger and one handler.
 
-```
+config.json
+```json
 {
     "handler" : {
         "stream" : {
@@ -27,7 +28,13 @@ You have to configurate at least the _default logger and one handler.
 }
 ```
 
-```
+index.php
+```php
+$config = json_decode(
+    file_get_contents('config.json'),
+    true
+);
+
 $loggerFactory = new \Logger\Factory($config);
 
 $logger = $loggerFactory->createLogger();
