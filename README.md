@@ -1,17 +1,17 @@
 # Monolog-Creator
 
-This classes provides a simple factory for creating pre configurated [monolog](https://github.com/Seldaek/monolog) logger objects.
+This classes provides a simple factory for creating preconfigurated [monolog](https://github.com/Seldaek/monolog) logger objects.
 
 Monolog-Creator supports not much handler, formatter and processor from monolog at the moment. So feel free to extend the library.
 
 ### examples
 
-##### minimal
+#### minimal
 
 You have to configurate at least the _default logger and one handler.
 
 **config.json**
-```json
+```
 {
     "handler" : {
         "stream" : {
@@ -29,7 +29,8 @@ You have to configurate at least the _default logger and one handler.
 ```
 
 **index.php**
-```php
+```
+<\?php
 $config = json_decode(
     file_get_contents('config.json'),
     true
@@ -41,11 +42,12 @@ $logger = $loggerFactory->createLogger();
 $logger->addWarning('I am a warning');
 ```
 
-##### different logger
+#### different logger
 
-But you can also create different configurated logger. For example with
+Also you can create different preconfigurated logger. For example with
 another log level or handler.
 
+**config.json**
 ```
 {
     "handler" : {
@@ -67,17 +69,26 @@ another log level or handler.
 }
 ```
 
+**index.php**
 ```
+<\?php
+
+$config = json_decode(
+    file_get_contents('config.json'),
+    true
+);
+
 $loggerFactory = new \Logger\Factory($config);
 
 $logger = $loggerFactory->createLogger('test');
 $logger->addDebug('I am a debug message');
 ```
 
-##### different formatter
+#### different formatter
 
-You can configure the log output at handle via formatter
+You can configure log output with a formatter
 
+**config.json**
 ```
 {
     "handler" : {
@@ -88,7 +99,7 @@ You can configure the log output at handle via formatter
     },
     "formatter" : {
         "logstash" : {
-            "type" : "partner-integration-televisa"
+            "type" : "test-app"
         }
     },
     "logger" : {
@@ -104,12 +115,15 @@ You can configure the log output at handle via formatter
 }
 ```
 
-##### optional processors
+#### optional processors
 
 You can optionally add processors to your logger
 
+**config.json**
 ```
 {
+    ...
+
     "logger" : {
         "test" : {
             "handler" : ["stream"],
@@ -123,7 +137,7 @@ You can optionally add processors to your logger
 
 ### supported handler:
 
-##### StreamHandler
+#### StreamHandler
 ```
 "handler" : {
     "stream" : {
@@ -132,12 +146,12 @@ You can optionally add processors to your logger
 }
 ```
 
-##### UdpHandler (custom handler)
+#### UdpHandler (custom handler)
 ```
 "handler" : {
     "udp" : {
-        "host"       : "192.168.50.48",
-        "port"       : "9999"
+        "host" : "192.168.42.42",
+        "port" : "6666"
     }
 }
 ```
@@ -145,11 +159,11 @@ You can optionally add processors to your logger
 
 ### supported formatter:
 
-##### LogstashFormatter
+#### LogstashFormatter
 ```
 "formatter" : {
     "logstash" : {
-        "type" : "partner-integration-televisa"
+        "type" : "test-app"
     }
 }
 ```
@@ -157,6 +171,17 @@ You can optionally add processors to your logger
 
 ### supported processors:
 
-##### WebProcessors
+#### WebProcessors
 
-Adds the current request URI, request method, client IP and user agent to a log record.
+```
+{
+    ...
+
+    "logger" : {
+        "test" : {
+            ...
+            "processors" : ["web"],
+        }
+    }
+}
+```
