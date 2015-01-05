@@ -10,7 +10,7 @@ Monolog-Creator supports not much handler, formatter and processor from monolog 
 
 You have to configurate at least the _default logger and one handler.
 
-config.json
+**config.json**
 ```json
 {
     "handler" : {
@@ -28,7 +28,7 @@ config.json
 }
 ```
 
-index.php
+**index.php**
 ```php
 $config = json_decode(
     file_get_contents('config.json'),
