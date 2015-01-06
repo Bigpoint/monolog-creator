@@ -1,11 +1,11 @@
 <?php
-namespace Logger;
+namespace MonologCreator;
 
-use \Logger;
+use \MonologCreator;
 use \Monolog;
 
 /**
- * Factory class to for creating monolog loggers via configuration array
+ * Factory class to for creating monolog loggers with preconfigurated array
  */
 class Factory
 {
@@ -44,15 +44,18 @@ class Factory
     }
 
     /**
+     * Creates a single Monolog\Logger object depend on assigned logger name
+     * and configuration. Created loggers are cached for multiusage.
+     *
      * @param string $name
      *
      * @return Monolog\Logger
      *
-     * @throws Logger\Exception
+     * @throws MonologCreator\Exception
      */
     public function createLogger($name)
     {
-        // check if logger already exits
+        // short circut for cached logger objects
         if (true === array_key_exists($name, $this->_logger)) {
             return $this->_logger[$name];
         }
@@ -77,7 +80,7 @@ class Factory
      *
      * @return array
      *
-     * @throws Logger\Exception
+     * @throws MonologCreator\Exception
      */
     public function createHandlers(array $loggerConfig)
     {
@@ -98,7 +101,7 @@ class Factory
      *
      * @return array
      *
-     * @throws Logger\Exception
+     * @throws MonologCreator\Exception
      */
     public function createProcessors(array $loggerConfig)
     {
@@ -131,16 +134,16 @@ class Factory
      *
      * @return array
      *
-     * @throws Logger\Exception
+     * @throws MonologCreator\Exception
      */
     private function _getLoggerConfig($name)
     {
         if (false === array_key_exists('logger', $this->_config)) {
-            throw new Logger\Exception("no logger configuration found");
+            throw new MonologCreator\Exception("no logger configuration found");
         }
 
         if (false === array_key_exists('_default', $this->_config['logger'])) {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 "no configuration found for logger: _default"
             );
         }
@@ -152,19 +155,19 @@ class Factory
         }
 
         if (false === array_key_exists('handler', $loggerConfig)) {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 "no handler configurated for logger: " . $name
             );
         }
 
         if (false === array_key_exists('level', $loggerConfig)) {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 "no level configurated for logger: " . $name
             );
         }
 
         if (false === array_key_exists($loggerConfig['level'], $this->_levels)) {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 "invalid level: " . $loggerConfig['level']
             );
         }
@@ -180,7 +183,7 @@ class Factory
      *
      * @return Monolog\Handler\HandlerInterface
      *
-     * @throws Logger\Exception
+     * @throws MonologCreator\Exception
      */
     private function _createHandler(
         $handlerType,
@@ -188,13 +191,13 @@ class Factory
     ) {
 
         if (false === array_key_exists('handler', $this->_config)) {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 'no handler configuration found'
             );
         }
 
         if (false === array_key_exists($handlerType, $this->_config['handler'])) {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 'no handler configuration found for handlerType: '
                 . $handlerType
             );
@@ -211,7 +214,7 @@ class Factory
             $handler = $this->_createUdphandler($handlerConfig, $level);
 
         } else {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 'handler type: ' . $handlerType . ' is not supported'
             );
         }
@@ -232,12 +235,12 @@ class Factory
      *
      * @return Monolog\Handler\StreamHandler
      *
-     * @throws Logger\Exception
+     * @throws MonologCreator\Exception
      */
     private function _createStreamHandler(array $handlerConfig, $level)
     {
         if (false === array_key_exists('path', $handlerConfig)) {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 'path configuration for stream handler is missing'
             );
         }
@@ -252,25 +255,25 @@ class Factory
      * @param  array  $handlerConfig
      * @param  string $level
      *
-     * @return Logger\Handler\Udp
+     * @return MonologCreator\Handler\Udp
      *
-     * @throws Logger\Exception
+     * @throws MonologCreator\Exception
      */
     private function _createUdpHandler(array $handlerConfig, $level)
     {
         if (false === array_key_exists('host', $handlerConfig)) {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 'host configuration for udp handler is missing'
             );
         }
 
         if (false === array_key_exists('port', $handlerConfig)) {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 'port configuration for udp handler is missing'
             );
         }
 
-        return new Logger\Handler\Udp(
+        return new MonologCreator\Handler\Udp(
             $this->_createUdpSocket(
                 $handlerConfig['host'],
                 $handlerConfig['port']
@@ -300,18 +303,18 @@ class Factory
      *
      * @return Monolog\Formatter\FormatterInterface
      *
-     * @throws Logger\Exception
+     * @throws MonologCreator\Exception
      */
     private function _createFormatter($formatterType)
     {
         if (false === array_key_exists('formatter', $this->_config)) {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 'no formatter configuration found'
             );
         }
 
         if (false === array_key_exists($formatterType, $this->_config['formatter'])) {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 'no formatter configuration found for formatterType: '
                 . $formatterType
             );
@@ -323,7 +326,7 @@ class Factory
             return $this->_createLogstashFormatter($formatterConfig);
         }
 
-        throw new Logger\Exception(
+        throw new MonologCreator\Exception(
             'formatter type: ' . $formatterType . ' is not supported'
         );
     }
@@ -333,12 +336,12 @@ class Factory
      *
      * @return Monolog\Formatter\LogstashFormatter
      *
-     * @throws Logger\Exception
+     * @throws MonologCreator\Exception
      */
     private function _createLogstashFormatter(array $formatterConfig)
     {
         if (false === array_key_exists('type', $formatterConfig)) {
-            throw new Logger\Exception(
+            throw new MonologCreator\Exception(
                 'type configuration for logstash foramtter is missing'
             );
         }

@@ -1,24 +1,18 @@
 {
-    "name": "libraries/logger",
+    "name": "bigpoint/monolog-creator",
     "authors": [
         {
             "name": "Peter Ahrens",
             "email": "pahrens@bigpoint.net"
         }
     ],
-    "repositories": {
-        "bigpoint": {
-            "type": "composer",
-            "url": "https://packagist.bigpoint.net/"
-        }
-    },
     "require": {
         "php": ">=5.3.3",
-        "monolog/monolog": "1.11.0"
+        "monolog/monolog": "1.12.0"
     },
     "autoload": {
         "psr-0": {
-            "Logger\\": ["src/", "tests/"]
+            "MonologCreator\\": ["src/", "tests/"]
         }
     }
 }

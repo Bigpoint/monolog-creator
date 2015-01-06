@@ -1,6 +1,6 @@
 <?php
 
-namespace Logger;
+namespace MonologCreator;
 
 /**
  *
@@ -132,7 +132,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $configString
      *
-     * @expectedException Logger\Exception
+     * @expectedException MonologCreator\Exception
      * @dataProvider dataProviderCreateDefaultLoggerFailWithFormatter
      */
     public function testCreateDefaultLoggerFailWithFormatter($configString)
