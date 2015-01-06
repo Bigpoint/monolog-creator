@@ -4,6 +4,10 @@
         {
             "name": "Peter Ahrens",
             "email": "pahrens@bigpoint.net"
+        },
+        {
+            "name": "Andreas Schleifer",
+            "email": "aschleifer@bigpoint.net"
         }
     ],
     "require": {

@@ -120,7 +120,7 @@ class Factory
 
                 $processors[] = $webProcessor;
             } else {
-                throw new Logger\Exception(
+                throw new MonologCreator\Exception(
                     'processor type: ' . $processor . ' is not supported'
                 );
             }
