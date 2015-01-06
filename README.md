@@ -4,6 +4,12 @@ This classes provides a simple factory for creating preconfigurated [monolog](ht
 
 Monolog-Creator supports not much handler, formatter and processor from monolog at the moment. So feel free to extend the library.
 
+### installation
+
+```
+composer require bigpoint/monolog-creator
+```
+
 ### examples
 
 #### minimal
@@ -30,16 +36,19 @@ You have to configurate at least the _default logger and one handler.
 
 **index.php**
 ```
-<\?php
+<?php
+require 'vendor/autoload.php';
+
 $config = json_decode(
     file_get_contents('config.json'),
     true
 );
 
-$loggerFactory = new \Logger\Factory($config);
+$loggerFactory = new \MonologCreator\Factory($config);
 
-$logger = $loggerFactory->createLogger();
+$logger = $loggerFactory->createLogger('name');
 $logger->addWarning('I am a warning');
+?>
 ```
 
 #### different logger
@@ -71,7 +80,8 @@ another log level or handler.
 
 **index.php**
 ```
-<\?php
+<?php
+require 'vendor/autoload.php';
 
 $config = json_decode(
     file_get_contents('config.json'),
@@ -82,6 +92,7 @@ $loggerFactory = new \Logger\Factory($config);
 
 $logger = $loggerFactory->createLogger('test');
 $logger->addDebug('I am a debug message');
+?>
 ```
 
 #### different formatter
