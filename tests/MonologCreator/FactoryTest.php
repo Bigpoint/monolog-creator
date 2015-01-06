@@ -50,10 +50,9 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreateDefaultLoggerFail($configString)
     {
         $config = json_decode($configString, true);
-        $loggerName = 'test';
 
         $loggerFactory = new Factory($config);
-        $testLogger = $loggerFactory->createLogger($loggerName);
+        $testLogger = $loggerFactory->createLogger('test');
     }
 
     public function dataProviderCreateDefaultLoggerFail()
