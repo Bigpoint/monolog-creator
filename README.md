@@ -1,6 +1,6 @@
 # Monolog-Creator
 
-This classes provides a simple factory for creating preconfigurated [monolog](https://github.com/Seldaek/monolog) logger objects.
+These classes provides a simple factory for creating preconfigurated [monolog](https://github.com/Seldaek/monolog) logger objects.
 
 Monolog-Creator supports not much handler, formatter and processor from monolog at the moment. So feel free to extend the library.
 
