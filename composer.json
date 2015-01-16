@@ -1,5 +1,9 @@
 {
     "name": "bigpoint/monolog-creator",
+    "type" : "library",
+    "description" : "This classes provides a simple factory for creating preconfigurated monolog logger objects.",
+    "keywords" : ["logging, log", "monolog"],
+    "license" : "",
     "authors": [
         {
             "name": "Peter Ahrens",
@@ -10,9 +14,12 @@
             "email": "aschleifer@bigpoint.net"
         }
     ],
+    "support" : {
+        "issues" : "https://github.com/Bigpoint/monolog-creator/issues"
+    },
     "require": {
         "php": ">=5.3.3",
-        "monolog/monolog": "1.12.0"
+        "monolog/monolog": "1.12.*"
     },
     "autoload": {
         "psr-0": {

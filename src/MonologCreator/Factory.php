@@ -55,7 +55,7 @@ class Factory
      */
     public function createLogger($name)
     {
-        // short circut for cached logger objects
+        // short circuit for cached logger objects
         if (true === array_key_exists($name, $this->_logger)) {
             return $this->_logger[$name];
         }
