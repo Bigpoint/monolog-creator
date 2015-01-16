@@ -2,6 +2,7 @@
     "name": "bigpoint/monolog-creator",
     "type" : "library",
     "description" : "This classes provides a simple factory for creating preconfigurated monolog logger objects.",
+    "homepage" : "https://github.com/Bigpoint/monolog-creator",
     "keywords" : ["logging", "log", "monolog"],
     "license" : "",
     "authors": [
