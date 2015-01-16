@@ -196,13 +196,9 @@ You can optionally add processors to your logger
 #### WebProcessors
 **config.json**
 ~~~ json
-{
-    [...]
     "logger" : {
         "test" : {
-            ...
             "processors" : ["web"],
         }
     }
-}
 ~~~
