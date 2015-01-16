@@ -133,7 +133,7 @@ You can optionally add processors to your logger
 **config.json**
 ~~~ json
 {
-    ...
+    [...]
     "logger" : {
         "test" : {
             "handler" : ["stream"],
@@ -151,7 +151,7 @@ You can optionally add processors to your logger
 **config.json**
 ~~~ json
 {
-    ...
+    [...]
     "handler" : {
         "stream" : {
             "path" : "./app.log"
@@ -164,7 +164,7 @@ You can optionally add processors to your logger
 **config.json**
 ~~~ json
 {
-    ...
+    [...]
     "handler" : {
         "udp" : {
             "host" : "192.168.42.42",
@@ -181,7 +181,7 @@ You can optionally add processors to your logger
 **config.json**
 ~~~ json
 {
-    ...
+    [...]
     "formatter" : {
         "logstash" : {
             "type" : "test-app"
@@ -197,7 +197,7 @@ You can optionally add processors to your logger
 **config.json**
 ~~~ json
 {
-    ...
+    [...]
     "logger" : {
         "test" : {
             ...
