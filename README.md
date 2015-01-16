@@ -132,14 +132,11 @@ You can optionally add processors to your logger
 
 **config.json**
 ~~~ json
-{
-    [...]
-    "logger" : {
-        "test" : {
-            "handler" : ["stream"],
-            "processors" : ["web"],
-            "level" : "DEBUG"
-        }
+"logger" : {
+    "test" : {
+        "handler" : ["stream"],
+        "processors" : ["web"],
+        "level" : "DEBUG"
     }
 }
 ~~~
@@ -150,12 +147,9 @@ You can optionally add processors to your logger
 #### StreamHandler
 **config.json**
 ~~~ json
-{
-    [...]
-    "handler" : {
-        "stream" : {
-            "path" : "./app.log"
-        }
+"handler" : {
+    "stream" : {
+        "path" : "./app.log"
     }
 }
 ~~~
@@ -163,13 +157,10 @@ You can optionally add processors to your logger
 #### UdpHandler (custom handler)
 **config.json**
 ~~~ json
-{
-    [...]
-    "handler" : {
-        "udp" : {
-            "host" : "192.168.42.42",
-            "port" : "6666"
-        }
+"handler" : {
+    "udp" : {
+        "host" : "192.168.42.42",
+        "port" : "6666"
     }
 }
 ~~~
@@ -180,12 +171,9 @@ You can optionally add processors to your logger
 #### LogstashFormatter
 **config.json**
 ~~~ json
-{
-    [...]
-    "formatter" : {
-        "logstash" : {
-            "type" : "test-app"
-        }
+"formatter" : {
+    "logstash" : {
+        "type" : "test-app"
     }
 }
 ~~~
@@ -196,9 +184,9 @@ You can optionally add processors to your logger
 #### WebProcessors
 **config.json**
 ~~~ json
-    "logger" : {
-        "test" : {
-            "processors" : ["web"],
-        }
+"logger" : {
+    "test" : {
+        "processors" : ["web"],
     }
+}
 ~~~
