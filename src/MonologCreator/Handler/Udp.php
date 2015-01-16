@@ -1,8 +1,9 @@
 <?php
-namespace Logger\Handler;
+namespace MonologCreator\Handler;
 
 /**
- * Class Udp
+ * Custom Monolog Handler to sent logs via UDP. Its based on
+ * \Monolog\Handler\SyslogUdp\UdpSocket.
  *
  * @package Logger\Handler
  */
@@ -40,6 +41,9 @@ class Udp extends \Monolog\Handler\AbstractProcessingHandler
         }
     }
 
+    /**
+     * @return null
+     */
     public function close()
     {
         $this->_socket->close();

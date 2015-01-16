@@ -1,6 +1,6 @@
 <?php
 
-namespace Logger;
+namespace MonologCreator;
 
 /**
  *
@@ -44,16 +44,15 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $configString
      *
-     * @expectedException Logger\Exception
+     * @expectedException MonologCreator\Exception
      * @dataProvider dataProviderCreateDefaultLoggerFail
      */
     public function testCreateDefaultLoggerFail($configString)
     {
         $config = json_decode($configString, true);
-        $loggerName = 'test';
 
         $loggerFactory = new Factory($config);
-        $testLogger = $loggerFactory->createLogger($loggerName);
+        $testLogger = $loggerFactory->createLogger('test');
     }
 
     public function dataProviderCreateDefaultLoggerFail()
@@ -132,7 +131,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $configString
      *
-     * @expectedException Logger\Exception
+     * @expectedException MonologCreator\Exception
      * @dataProvider dataProviderCreateDefaultLoggerFailWithFormatter
      */
     public function testCreateDefaultLoggerFailWithFormatter($configString)
@@ -224,7 +223,6 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-
     public function testCreateStreamLogger()
     {
         $configString = '{
@@ -265,7 +263,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $configString
      *
-     * @expectedException \Logger\Exception
+     * @expectedException \MonologCreator\Exception
      * @dataProvider dataProviderCreateStreamLoggerFail
      */
     public function testCreateStreamLoggerFail($configString)
@@ -477,7 +475,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
         // mock factory and udp socket
         $mockFactory = $this->getMock(
-            '\Logger\Factory',
+            '\MonologCreator\Factory',
             array('_createUdpSocket'),
             array($config)
         );
@@ -507,7 +505,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         // check handler
         $handlers = $testLogger->getHandlers();
         $this->assertEquals(1, count($handlers));
-        $this->assertTrue($handlers[0] instanceof \Logger\Handler\Udp);
+        $this->assertTrue($handlers[0] instanceof \MonologCreator\Handler\Udp);
     }
 
 
@@ -515,7 +513,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $configString
      *
-     * @expectedException Logger\Exception
+     * @expectedException MonologCreator\Exception
      * @dataProvider dataProviderCreateUdpLoggerFail
      */
     public function testCreateUdpLoggerFail($configString)
@@ -586,7 +584,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Logger\Exception
+     * @expectedException \MonologCreator\Exception
      * @expectedExceptionMessage formatter type: mockFomatter is not supported
      */
     public function testCreateFormatterFail()
@@ -594,9 +592,8 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $config = json_decode(
             '{
                 "handler" : {
-                    "udp" : {
-                        "host"      : "192.168.50.48",
-                        "port"      : 9999,
+                    "stream" : {
+                        "path"      : "./fubar.log",
                         "level"     : "INFO",
                         "formatter" : "mockFomatter"
                     }
@@ -608,21 +605,20 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
                 },
                 "logger" : {
                     "_default" : {
-                        "handler" : ["udp"],
+                        "handler" : ["stream"],
                         "level" : "WARNING"
                     },
                     "test" : {
-                        "handler" : ["udp"],
+                        "handler" : ["stream"],
                         "level" : "INFO"
                     }
                 }
             }',
             true
         );
-        $loggerName = 'test';
 
         $factory = new Factory($config);
-        $factory->createLogger($loggerName);
+        $factory->createLogger('test');
     }
 
     public function testCreateLoggerWithProcessor()
@@ -630,9 +626,8 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $config = json_decode(
             '{
                 "handler" : {
-                    "udp" : {
-                        "host"      : "192.168.50.48",
-                        "port"      : 9999,
+                    "stream" : {
+                        "path"      : "./fubar.log",
                         "level"     : "INFO",
                         "formatter" : "logstash"
                     }
@@ -644,11 +639,11 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
                 },
                 "logger" : {
                     "_default" : {
-                        "handler" : ["udp"],
+                        "handler" : ["stream"],
                         "level" : "WARNING"
                     },
                     "test" : {
-                        "handler" : ["udp"],
+                        "handler" : ["stream"],
                         "processors": ["web"],
                         "level" : "INFO"
                     }
@@ -656,14 +651,18 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
             }',
             true
         );
-        $loggerName = 'test';
 
         $factory = new Factory($config);
-        $factory->createLogger($loggerName);
+        $logger  = $factory->createLogger('test');
+
+        $this->assertInstanceOf(
+            '\Monolog\Processor\WebProcessor',
+            $logger->getProcessors()[0]
+        );
     }
 
     /**
-     * @expectedException \Logger\Exception
+     * @expectedException \MonologCreator\Exception
      * @expectedExceptionMessage processor type: mockProccessor is not supported
      */
     public function testCreateLoggerWithProcessorFail()
@@ -671,9 +670,8 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $config = json_decode(
             '{
                 "handler" : {
-                    "udp" : {
-                        "host"      : "192.168.50.48",
-                        "port"      : 9999,
+                    "stream" : {
+                        "path"      : "./fubar.log",
                         "level"     : "INFO",
                         "formatter" : "logstash"
                     }
@@ -685,11 +683,11 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
                 },
                 "logger" : {
                     "_default" : {
-                        "handler" : ["udp"],
+                        "handler" : ["stream"],
                         "level" : "WARNING"
                     },
                     "test" : {
-                        "handler" : ["udp"],
+                        "handler" : ["stream"],
                         "processors": ["mockProccessor"],
                         "level" : "INFO"
                     }

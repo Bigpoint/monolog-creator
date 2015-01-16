@@ -1,24 +1,29 @@
 {
-    "name": "libraries/logger",
+    "name": "bigpoint/monolog-creator",
+    "type" : "library",
+    "description" : "This classes provides a simple factory for creating preconfigurated monolog logger objects.",
+    "keywords" : ["logging, log", "monolog"],
+    "license" : "",
     "authors": [
         {
             "name": "Peter Ahrens",
             "email": "pahrens@bigpoint.net"
+        },
+        {
+            "name": "Andreas Schleifer",
+            "email": "aschleifer@bigpoint.net"
         }
     ],
-    "repositories": {
-        "bigpoint": {
-            "type": "composer",
-            "url": "https://packagist.bigpoint.net/"
-        }
+    "support" : {
+        "issues" : "https://github.com/Bigpoint/monolog-creator/issues"
     },
     "require": {
         "php": ">=5.3.3",
-        "monolog/monolog": "1.11.0"
+        "monolog/monolog": "1.12.*"
     },
     "autoload": {
         "psr-0": {
-            "Logger\\": ["src/", "tests/"]
+            "MonologCreator\\": ["src/", "tests/"]
         }
     }
 }
