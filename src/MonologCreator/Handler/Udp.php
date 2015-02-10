@@ -6,6 +6,8 @@ namespace MonologCreator\Handler;
  * \Monolog\Handler\SyslogUdp\UdpSocket.
  *
  * @package Logger\Handler
+ *
+ * @@codeCoverageIgnore
  */
 class Udp extends \Monolog\Handler\AbstractProcessingHandler
 {
@@ -20,7 +22,7 @@ class Udp extends \Monolog\Handler\AbstractProcessingHandler
      * @param bool                                 $bubble
      */
     public function __construct(
-        $socket,
+        \Monolog\Handler\SyslogUdp\UdpSocket $socket,
         $level = \Monolog\Logger::DEBUG,
         $bubble = true
     ) {

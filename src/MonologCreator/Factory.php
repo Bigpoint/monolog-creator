@@ -84,10 +84,18 @@ class Factory
      */
     public function createHandlers(array $loggerConfig)
     {
-        $handlers = array();
+        $handlers         = array();
+        $formatterFactory = new MonologCreator\Factory\Formatter(
+            $this->_config
+        );
+        $handlerFactory   = new MonologCreator\Factory\Handler(
+            $this->_config,
+            $this->_levels,
+            $formatterFactory
+        );
 
         foreach ($loggerConfig['handler'] as $handlerType) {
-            $handlers[] = $this->_createHandler(
+            $handlers[] = $handlerFactory->create(
                 $handlerType,
                 $loggerConfig['level']
             );
@@ -173,185 +181,5 @@ class Factory
         }
 
         return $loggerConfig;
-    }
-
-    /**
-     * creates specific monolog handlers
-     *
-     * @param string $handlerType
-     * @param string $level
-     *
-     * @return Monolog\Handler\HandlerInterface
-     *
-     * @throws MonologCreator\Exception
-     */
-    private function _createHandler(
-        $handlerType,
-        $level
-    ) {
-
-        if (false === array_key_exists('handler', $this->_config)) {
-            throw new MonologCreator\Exception(
-                'no handler configuration found'
-            );
-        }
-
-        if (false === array_key_exists($handlerType, $this->_config['handler'])) {
-            throw new MonologCreator\Exception(
-                'no handler configuration found for handlerType: '
-                . $handlerType
-            );
-        }
-
-        $handler = null;
-        $handlerConfig = $this->_config['handler'][$handlerType];
-
-        // evaluate handler
-        if ('stream' === $handlerType) {
-            $handler = $this->_createStreamhandler($handlerConfig, $level);
-
-        } else if ('udp' === $handlerType) {
-            $handler = $this->_createUdphandler($handlerConfig, $level);
-
-        } else {
-            throw new MonologCreator\Exception(
-                'handler type: ' . $handlerType . ' is not supported'
-            );
-        }
-
-        // set formatter
-        if (true === array_key_exists('formatter', $handlerConfig)) {
-            $handler->setFormatter(
-                $this->_createFormatter($handlerConfig['formatter'])
-            );
-        }
-
-        return $handler;
-    }
-
-    /**
-     * @param  array  $handlerConfig
-     * @param  string $level
-     *
-     * @return Monolog\Handler\StreamHandler
-     *
-     * @throws MonologCreator\Exception
-     */
-    private function _createStreamHandler(array $handlerConfig, $level)
-    {
-        if (false === array_key_exists('path', $handlerConfig)) {
-            throw new MonologCreator\Exception(
-                'path configuration for stream handler is missing'
-            );
-        }
-
-        return new Monolog\Handler\StreamHandler(
-            $handlerConfig['path'],
-            $this->_levels[$level]
-        );
-    }
-
-    /**
-     * @param  array  $handlerConfig
-     * @param  string $level
-     *
-     * @return MonologCreator\Handler\Udp
-     *
-     * @throws MonologCreator\Exception
-     */
-    private function _createUdpHandler(array $handlerConfig, $level)
-    {
-        if (false === array_key_exists('host', $handlerConfig)) {
-            throw new MonologCreator\Exception(
-                'host configuration for udp handler is missing'
-            );
-        }
-
-        if (false === array_key_exists('port', $handlerConfig)) {
-            throw new MonologCreator\Exception(
-                'port configuration for udp handler is missing'
-            );
-        }
-
-        return new MonologCreator\Handler\Udp(
-            $this->_createUdpSocket(
-                $handlerConfig['host'],
-                $handlerConfig['port']
-            ),
-            $this->_levels[$level]
-        );
-    }
-
-    /**
-     * @param  string $host
-     * @param  int    $port
-     *
-     * @return Monolog\Handler\SyslogUdp\UdpSocket
-     *
-     * @codeCoverageIgnore
-     */
-    protected function _createUdpSocket($host, $port)
-    {
-        return new Monolog\Handler\SyslogUdp\UdpSocket(
-            $host,
-            $port
-        );
-    }
-
-    /**
-     * @param  string $formatterType
-     *
-     * @return Monolog\Formatter\FormatterInterface
-     *
-     * @throws MonologCreator\Exception
-     */
-    private function _createFormatter($formatterType)
-    {
-        if (false === array_key_exists('formatter', $this->_config)) {
-            throw new MonologCreator\Exception(
-                'no formatter configuration found'
-            );
-        }
-
-        if (false === array_key_exists($formatterType, $this->_config['formatter'])) {
-            throw new MonologCreator\Exception(
-                'no formatter configuration found for formatterType: '
-                . $formatterType
-            );
-        }
-
-        $formatterConfig = $this->_config['formatter'][$formatterType];
-
-        if ('logstash' === $formatterType) {
-            return $this->_createLogstashFormatter($formatterConfig);
-        }
-
-        throw new MonologCreator\Exception(
-            'formatter type: ' . $formatterType . ' is not supported'
-        );
-    }
-
-    /**
-     * @param  array $formatterConfig
-     *
-     * @return Monolog\Formatter\LogstashFormatter
-     *
-     * @throws MonologCreator\Exception
-     */
-    private function _createLogstashFormatter(array $formatterConfig)
-    {
-        if (false === array_key_exists('type', $formatterConfig)) {
-            throw new MonologCreator\Exception(
-                'type configuration for logstash foramtter is missing'
-            );
-        }
-
-        return new Monolog\Formatter\LogstashFormatter(
-            $formatterConfig['type'],
-            null,
-            null,
-            'ctxt_',
-            Monolog\Formatter\LogstashFormatter::V1
-        );
     }
 }
