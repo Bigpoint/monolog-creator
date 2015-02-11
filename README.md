@@ -165,6 +165,17 @@ You can optionally add processors to your logger
 }
 ~~~
 
+#### RedisHandler (with [predis/predis](https://packagist.org/packages/predis/predis))
+**config.json**
+~~~ json
+"handler" : {
+    "redis" : {
+        "url" : "tcp://192.168.42.43:6379",
+        "key" : "redisLogKey",
+    }
+}
+~~~
+
 
 ### supported formatter:
 
