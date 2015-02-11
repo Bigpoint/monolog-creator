@@ -74,6 +74,8 @@ class Handler
             $handler = $this->_createStreamhandler($handlerConfig, $level);
         } elseif ('udp' === $handlerType) {
             $handler = $this->_createUdphandler($handlerConfig, $level);
+        } elseif ('redis' === $handlerType) {
+            $handler = $this->_createRedisHandler($handlerConfig, $level);
         } else {
             throw new MonologCreator\Exception(
                 'handler type: ' . $handlerType . ' is not supported'
@@ -157,5 +159,46 @@ class Handler
             $host,
             $port
         );
+    }
+
+    /**
+     * @param array  $handlerConfig
+     * @param string $level
+     *
+     * @return Monolog\Handler\RedisHandler
+     *
+     * @throws MonologCreator\Exception
+     */
+    private function _createRedisHandler(array $handlerConfig, $level)
+    {
+        if (false === array_key_exists('url', $handlerConfig)) {
+            throw new MonologCreator\Exception(
+                'url configuration for redis handler is missing'
+            );
+        }
+
+        if (false === array_key_exists('key', $handlerConfig)) {
+            throw new MonologCreator\Exception(
+                'key configuration for redis handler is missing'
+            );
+        }
+
+        return new Monolog\Handler\RedisHandler(
+            $this->_createPredisClient($handlerConfig['url']),
+            $handlerConfig['key'],
+            $this->_levels[$level]
+        );
+    }
+
+    /**
+     * @param string $url
+     *
+     * @return \Predis\Client
+     *
+     * @codeCoverageIgnore
+     */
+    protected function _createPredisClient($url)
+    {
+        return new \Predis\Client($url);
     }
 }

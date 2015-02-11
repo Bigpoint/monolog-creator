@@ -20,6 +20,16 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
      */
     private $_mockFormatter = null;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    private $_mockUdpSocket = null;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    private $_mockPredisClient = null;
+
     public function setUp()
     {
         parent::setUp();
@@ -39,6 +49,20 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
                 'format',
                 'formatBatch',
             ),
+            array(),
+            '',
+            false
+        );
+        $this->_mockUdpSocket = $this->getMock(
+            '\Monolog\Handler\SyslogUdp\UdpSocket',
+            array(),
+            array(),
+            '',
+            false
+        );
+        $this->_mockPredisClient = $this->getMock(
+            '\Predis\Client',
+            array(),
             array(),
             '',
             false
@@ -199,13 +223,28 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             true
         );
 
-        $factory = new Handler(
-            $config,
+        $factory = $this->getMock(
+            '\MonologCreator\Factory\Handler',
             array(
-                'INFO' => Monolog\Logger::INFO,
+                '_createUdpSocket',
             ),
-            $this->_mockFormatterFactory
+            array(
+                $config,
+                array(
+                    'INFO' => Monolog\Logger::INFO,
+                ),
+                $this->_mockFormatterFactory,
+            )
         );
+
+        $factory->expects($this->exactly(1))
+            ->method('_createUdpSocket')
+            ->with(
+                $this->equalTo('192.168.50.48'),
+                $this->equalTo('9999')
+            )
+            ->will($this->returnValue($this->_mockUdpSocket));
+
         $handler = $factory->create('udp', 'INFO');
 
         $this->assertInstanceOf(
@@ -257,5 +296,81 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             '\Monolog\Formatter\FormatterInterface',
             $handler->getFormatter()
         );
+    }
+
+    /**
+     * @expectedException \MonologCreator\Exception
+     * @expectedExceptionMessage url configuration for redis handler is missing
+     */
+    public function testCreateRedisFailNoUrl()
+    {
+        $config = json_decode(
+            '{
+                "handler" : {
+                    "redis" : {}
+                }
+            }',
+            true
+        );
+
+        $factory = new Handler($config, array(), $this->_mockFormatterFactory);
+        $factory->create('redis', 'INFO');
+    }
+
+    /**
+     * @expectedException \MonologCreator\Exception
+     * @expectedExceptionMessage key configuration for redis handler is missing
+     */
+    public function testCreateRedisFailNoKey()
+    {
+        $config = json_decode(
+            '{
+                "handler" : {
+                    "redis" : {
+                        "url" : "mockUrl"
+                    }
+                }
+            }',
+            true
+        );
+
+        $factory = new Handler($config, array(), $this->_mockFormatterFactory);
+        $factory->create('redis', 'INFO');
+    }
+
+    public function testCreateRedis()
+    {
+        $config = json_decode(
+            '{
+                "handler" : {
+                    "redis" : {
+                        "url" : "mockUrl",
+                        "key" : "mockKey"
+                    }
+                }
+            }',
+            true
+        );
+
+        $factory = $this->getMock(
+            '\MonologCreator\Factory\Handler',
+            array(
+                '_createPredisClient',
+            ),
+            array(
+                $config,
+                array(
+                    'INFO' => Monolog\Logger::INFO,
+                ),
+                $this->_mockFormatterFactory,
+            )
+        );
+
+        $factory->expects($this->exactly(1))
+            ->method('_createPredisClient')
+            ->with($this->equalTo('mockUrl'))
+            ->will($this->returnValue($this->_mockPredisClient));
+
+        $factory->create('redis', 'INFO');
     }
 }
