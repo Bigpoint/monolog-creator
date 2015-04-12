@@ -52,6 +52,10 @@ class Formatter
             return $this->_createLogstash($formatterConfig);
         }
 
+        if ('line' === $formatterType) {
+            return $this->_createLine($formatterConfig);
+        }
+
         throw new MonologCreator\Exception(
             'formatter type: ' . $formatterType . ' is not supported'
         );
@@ -79,5 +83,56 @@ class Formatter
             'ctxt_',
             Monolog\Formatter\LogstashFormatter::V1
         );
+    }
+
+    /**
+     * @param array $formatterConfig
+     *
+     * @return Monolog\Formatter\LineFormatter
+     */
+    private function _createLine(array $formatterConfig)
+    {
+        $boolValues = array(
+            'true'  => true,
+            'false' => false,
+        );
+
+        $format = null;
+        if (true === array_key_exists('format', $formatterConfig)) {
+            $format = $formatterConfig['format'];
+        }
+
+        $dateFormat = null;
+        if (true === array_key_exists('dateFormat', $formatterConfig)) {
+            $dateFormat = $formatterConfig['dateFormat'];
+        }
+
+        $includeStacktraces = false;
+        if (true === array_key_exists('includeStacktraces', $formatterConfig)
+            && true === array_key_exists($formatterConfig['includeStacktraces'], $boolValues)
+        ) {
+            $includeStacktraces = $boolValues[$formatterConfig['includeStacktraces']];
+        }
+
+        $allowInlineLineBreaks = false;
+        if (true === array_key_exists('allowInlineLineBreaks', $formatterConfig)
+            && true === array_key_exists($formatterConfig['allowInlineLineBreaks'], $boolValues)
+        ) {
+            $allowInlineLineBreaks = $boolValues[$formatterConfig['allowInlineLineBreaks']];
+        }
+
+        $ignoreEmptyContextAndExtra = false;
+        if (true === array_key_exists('ignoreEmptyContextAndExtra', $formatterConfig)
+            && true === array_key_exists($formatterConfig['ignoreEmptyContextAndExtra'], $boolValues)
+        ) {
+            $ignoreEmptyContextAndExtra = $boolValues[$formatterConfig['ignoreEmptyContextAndExtra']];
+        }
+
+        $formatter = new Monolog\Formatter\LineFormatter($format, $dateFormat);
+        $formatter->includeStacktraces($includeStacktraces);
+        $formatter->allowInlineLineBreaks($allowInlineLineBreaks);
+        $formatter->ignoreEmptyContextAndExtra($ignoreEmptyContextAndExtra);
+
+        return $formatter;
     }
 }

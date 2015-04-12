@@ -189,6 +189,23 @@ You can optionally add processors to your logger
 }
 ~~~
 
+#### LineFormatter
+All values are optional. The boolean values `includeStacktraces`, `allowInlineLineBreaks`
+and `ignoreEmptyContextAndExtra` can be `"true"` or `"false"`.
+
+**config.json**
+~~~ json
+"formatter" : {
+    "line" : {
+        "format" : "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n",
+        "dateFormat" : "Y-m-d H:i:s",
+        "includeStacktraces" : "true",
+        "allowInlineLineBreaks" : "true",
+        "ignoreEmptyContextAndExtra" : "true"
+    }
+}
+~~~
+
 
 ### supported processors:
 
