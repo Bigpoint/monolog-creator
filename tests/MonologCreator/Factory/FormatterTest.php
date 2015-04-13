@@ -12,7 +12,7 @@ class FormatterTest extends \PHPUnit_Framework_TestCase
      * @expectedException \MonologCreator\Exception
      * @expectedExceptionMessage no formatter configuration found
      */
-    public function testCreatFailNoConfig()
+    public function testCreateFailNoConfig()
     {
         $factory = new Formatter(array());
         $factory->create('mockFomatter');
@@ -77,6 +77,136 @@ class FormatterTest extends \PHPUnit_Framework_TestCase
 
         $factory = new Formatter($config);
         $factory->create('logstash');
+    }
+
+    public function testCreateLine()
+    {
+        $config = json_decode(
+            '{
+                "formatter" : {
+                    "line" : {}
+                }
+            }',
+            true
+        );
+
+        $factory = new Formatter($config);
+        $actual = $factory->create('line');
+
+        $this->assertInstanceOf(
+            '\Monolog\Formatter\LineFormatter',
+            $actual
+        );
+    }
+
+    public function testCreateLineFormat()
+    {
+        $config = json_decode(
+            '{
+                "formatter" : {
+                    "line" : {
+                        "format" : "mockFormat"
+                    }
+                }
+            }',
+            true
+        );
+
+        $factory = new Formatter($config);
+        $actual = $factory->create('line');
+
+        $this->assertInstanceOf(
+            '\Monolog\Formatter\LineFormatter',
+            $actual
+        );
+    }
+
+    public function testCreateLineDateFormat()
+    {
+        $config = json_decode(
+            '{
+                "formatter" : {
+                    "line" : {
+                        "dateFormat" : "mockDateFormat"
+                    }
+                }
+            }',
+            true
+        );
+
+        $factory = new Formatter($config);
+        $actual = $factory->create('line');
+
+        $this->assertInstanceOf(
+            '\Monolog\Formatter\LineFormatter',
+            $actual
+        );
+    }
+
+    public function testCreateLineIncludeStacktraces()
+    {
+        $config = json_decode(
+            '{
+                "formatter" : {
+                    "line" : {
+                        "includeStacktraces" : "true"
+                    }
+                }
+            }',
+            true
+        );
+
+        $factory = new Formatter($config);
+        $actual = $factory->create('line');
+
+        $this->assertInstanceOf(
+            '\Monolog\Formatter\LineFormatter',
+            $actual
+        );
+    }
+
+    public function testCreateLineAllowInlineLineBreaks()
+    {
+        $config = json_decode(
+            '{
+                "formatter" : {
+                    "line" : {
+                        "allowInlineLineBreaks" : "true"
+                    }
+                }
+            }',
+            true
+        );
+
+        $factory = new Formatter($config);
+        $actual = $factory->create('line');
+
+        $this->assertInstanceOf(
+            '\Monolog\Formatter\LineFormatter',
+            $actual
+        );
+    }
+
+    public function testCreateLineIgnoreEmptyContextAndExtra()
+    {
+        $config = json_decode(
+            '{
+                "formatter" : {
+                    "line" : {
+                        "ignoreEmptyContextAndExtra" : "true"
+                    }
+                }
+            }',
+            true
+        );
+
+        $factory = new Formatter($config);
+        $actual = $factory->create('line');
+
+        $this->assertInstanceOf(
+            '\Monolog\Formatter\LineFormatter',
+            $actual
+        );
     }
 
     public function testCreate()
