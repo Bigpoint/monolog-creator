@@ -127,7 +127,7 @@ class Factory
                 $webProcessor->addExtraField('user_agent', 'HTTP_USER_AGENT');
 
                 $processors[] = $webProcessor;
-            } elseif ('browser') {
+            } elseif ('browser' === $processor) {
                 $processors[] = new MonologCreator\Processor\Browser();
             } else {
                 throw new MonologCreator\Exception(

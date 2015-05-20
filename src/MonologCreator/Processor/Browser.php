@@ -5,6 +5,8 @@ namespace MonologCreator\Processor;
  * Class Browser
  *
  * @package MonologCreator\Processor
+ *
+ * @@codeCoverageIgnore
  */
 class Browser
 {
@@ -19,7 +21,7 @@ class Browser
 
         $record['extra']['user_agent'] = $browser->parent;
         $record['extra']['user_os']    = $browser->platform;
-var_dump($record); die;
+
         return $record;
     }
 }
