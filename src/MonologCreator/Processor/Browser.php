@@ -17,7 +17,7 @@ class Browser
     {
         $browser = get_browser();
 
-        $record['user_agent'] = $browser->parent;
+        $record['user_agent'] = $browser->parent . ' / ' . $browser->platform;
 var_dump($record); die;
         return $record;
     }
