@@ -15,9 +15,10 @@ class Browser
      */
     public function __invoke(array $record)
     {
-        $browser = get_browser();
+        $browser = \get_browser();
 
-        $record['user_agent'] = $browser->parent . ' / ' . $browser->platform;
+        $record['extra']['user_agent'] = $browser->parent;
+        $record['extra']['user_os']    = $browser->platform;
 var_dump($record); die;
         return $record;
     }
