@@ -123,10 +123,7 @@ class Factory
 
         foreach ($loggerConfig['processors'] as $processor) {
             if ('web' === $processor) {
-                $webProcessor = new Monolog\Processor\WebProcessor();
-                $webProcessor->addExtraField('user_agent', 'HTTP_USER_AGENT');
-
-                $processors[] = $webProcessor;
+                $processors[] = new Monolog\Processor\WebProcessor();
             } elseif ('browser' === $processor) {
                 $processors[] = new MonologCreator\Processor\Browser();
             } else {
