@@ -147,7 +147,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCreateLoggerWithProcessor()
+    public function testCreateLoggerWithWebProcessor()
     {
         $config = json_decode(
             '{
@@ -183,6 +183,46 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(
             '\Monolog\Processor\WebProcessor',
+            $logger->getProcessors()[0]
+        );
+    }
+
+    public function testCreateLoggerWithBrowserProcessor()
+    {
+        $config = json_decode(
+            '{
+                "handler" : {
+                    "stream" : {
+                        "path"      : "./fubar.log",
+                        "level"     : "INFO",
+                        "formatter" : "logstash"
+                    }
+                },
+                "formatter" : {
+                    "logstash" : {
+                        "type" : "test"
+                    }
+                },
+                "logger" : {
+                    "_default" : {
+                        "handler" : ["stream"],
+                        "level" : "WARNING"
+                    },
+                    "test" : {
+                        "handler" : ["stream"],
+                        "processors": ["browser"],
+                        "level" : "INFO"
+                    }
+                }
+            }',
+            true
+        );
+
+        $factory = new Factory($config);
+        $logger  = $factory->createLogger('test');
+
+        $this->assertInstanceOf(
+            '\MonologCreator\Processor\Browser',
             $logger->getProcessors()[0]
         );
     }

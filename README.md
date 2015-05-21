@@ -219,6 +219,17 @@ and `ignoreEmptyContextAndExtra` can be `"true"` or `"false"`.
 }
 ~~~
 
+#### BrowserProcessors
+**config.json**
+~~~ json
+"logger" : {
+    "test" : {
+        "processors" : ["browser"],
+    }
+}
+~~~
+Uses the [get_browser()](http://php.net/manual/function.get-browser.php) function in order to determine a userfriendly name of the used browser and the used OS. These information are added as the "extra" fields `user_agent` and `user_os`. This function relys on the availablility of the `browscap.ini` as described in the linked documentation.
+
 ## License & Authors
 - Authors:: Peter Ahrens (<pahrens@bigpoint.net>), Andreas Schleifer (<aschleifer@bigpoint.net>)
 
