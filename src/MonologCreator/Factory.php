@@ -123,9 +123,10 @@ class Factory
 
         foreach ($loggerConfig['processors'] as $processor) {
             if ('web' === $processor) {
-                $processors[] = new Monolog\Processor\WebProcessor();
-            } elseif ('browser' === $processor) {
-                $processors[] = new MonologCreator\Processor\Browser();
+                $webProcessor = new Monolog\Processor\WebProcessor();
+                $webProcessor->addExtraField('user_agent', 'HTTP_USER_AGENT');
+
+                $processors[] = $webProcessor;
             } else {
                 throw new MonologCreator\Exception(
                     'processor type: ' . $processor . ' is not supported'
