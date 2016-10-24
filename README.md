@@ -14,7 +14,7 @@ composer require bigpoint/monolog-creator
 
 #### minimal
 
-You have to configurate at least the `_default` logger and one handler.
+You have to configure at least the `_default` logger and one handler.
 
 **config.json**
 ~~~ json
@@ -219,11 +219,23 @@ and `ignoreEmptyContextAndExtra` can be `"true"` or `"false"`.
 }
 ~~~
 
+#### RequestID Processor
+Injects a random UUID for each request to make multiple log messages from the same request easier to follow. 
+
+**config.json**
+~~~ json
+"logger" : {
+    "test" : {
+        "processors" : ["requestId"],
+    }
+}
+~~~
+
 ## License & Authors
-- Authors:: Peter Ahrens (<pahrens@bigpoint.net>), Andreas Schleifer (<aschleifer@bigpoint.net>)
+- Authors:: Peter Ahrens (<pahrens@bigpoint.net>), Andreas Schleifer (<aschleifer@bigpoint.net>), Hendrik Meyer (hmeyer@bigpoint.net)
 
 ```text
-Copyright:: 2015 Bigpoint GmbH
+Copyright:: 2015-2016 Bigpoint GmbH
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
