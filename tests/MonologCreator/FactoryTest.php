@@ -170,7 +170,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
                     },
                     "test" : {
                         "handler" : ["stream"],
-                        "processors": ["web"],
+                        "processors": ["web", "requestId"],
                         "level" : "INFO"
                     }
                 }
@@ -184,6 +184,10 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(
             '\Monolog\Processor\WebProcessor',
             $logger->getProcessors()[0]
+        );
+        $this->assertInstanceOf(
+            '\MonologCreator\Processor\RequestId',
+            $logger->getProcessors()[1]
         );
     }
 
