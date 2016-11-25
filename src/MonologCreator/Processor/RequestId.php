@@ -10,32 +10,34 @@ class RequestId
     /**
      * @var string
      */
-    protected $uuid;
+    private $_uuid;
 
-    public function __construct($uuid = null)
+    /**
+     * RequestId constructor.
+     */
+    public function __construct()
     {
-        if (null === $uuid) {
-            $this->uuid = $this->_generateUUID();
-        } else {
-            $this->uuid = $uuid;
-        }
+        $this->_uuid = $this->_generateUUID();
     }
 
     /**
-     * @param  array $record
+     * Called by Monolog - Allows processors to manipulate data.
      *
-     * @return array
+     *
+     * @param  array $record    The record to log
+     *
+     * @return array            The updated record to log
      */
     public function __invoke(array $record)
     {
-        $record['extra'] = array(
-            'request_id' => $this->uuid,
-        );
+        $record['extra']['request_id'] = $this->_uuid;
 
         return $record;
     }
 
     /**
+     * Generate a valid UUIDv4 utilizing the system´s available (P)RNGs.
+     *
      * @return string valid UUIDv4
      */
     protected function _generateUUID()
@@ -130,6 +132,8 @@ class RequestId
     }
 
     /**
+     * Generate a valid UUIDv4 from provided random data.
+     *
      * A UUIDv4 is formatted
      * xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
      * where x is 0-9, A-F and y is 8-9, A-B.
@@ -138,7 +142,7 @@ class RequestId
      *
      * @return string           valid, formatted UUIDv4
      */
-    protected function _generateUUIDFromData($data)
+    private function _generateUUIDFromData($data)
     {
         $data = substr($data, 0, 16);
 

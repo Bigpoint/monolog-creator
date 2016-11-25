@@ -9,19 +9,9 @@ namespace MonologCreator\Processor;
 class RequestIdTest extends \PHPUnit_Framework_TestCase
 {
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\MonologCreator\Processor\RequestId
-     */
-    private $subject = null;
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testConstructor()
     {
-        $this->subject =
+        $subject =
             $this->getMockBuilder('MonologCreator\Processor\RequestId')
                 ->setMethods(
                     array(
@@ -29,209 +19,188 @@ class RequestIdTest extends \PHPUnit_Framework_TestCase
                     )
                 )
                 ->getMock();
-        $this->subject->expects($this->once())
+        $subject->expects($this->once())
             ->method('_generateUUID');
-        $this->subject->__construct();
-    }
-
-    public function testConstructorWithUUID()
-    {
-        $this->subject =
-            $this->getMockBuilder('MonologCreator\Processor\RequestId')
-                ->setMethods(
-                    array(
-                        '_generateUUID',
-                    )
-                )
-                ->getMock();
-        $this->subject->expects($this->never())
-            ->method('_generateUUID');
-        $this->subject->__construct('mock');
+        $subject->__construct();
     }
 
     public function testInvoke()
     {
-        $this->subject  = new RequestId('mock');
-        $record         = array('extra' => array());
-        $expectedRecord = array('extra' => array('request_id' => 'mock'));
-        $actual         = $this->subject->__invoke($record);
-        $this->assertEquals($expectedRecord, $actual);
+        $subject = new RequestId();
+        $record  = ['extra' => []];
+        $actual  = $subject->__invoke($record);
+        $this->assertTrue(\array_key_exists('request_id', $actual['extra']));
+    }
+
+    /**
+     * A UUIDv4 is formatted
+     * xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+     * where x is 0-9, A-F and y is 8-9, A-B.
+     */
+    public function testGeneratedUUIDValid()
+    {
+        $subject = new RequestId();
+        $record  = ['extra' => []];
+        $actual  = $subject->__invoke($record);
+        $UUID    = $actual['extra']['request_id'];
+        $this->assertTrue(
+            1 === \preg_match(
+                '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
+                $UUID
+            )
+        );
     }
 
     public function testgenerateUUIDWithRandomBytes()
     {
-        $this->subject =
+        $subject =
             $this->getMockBuilder('MonologCreator\Processor\RequestId')
                 ->setMethods(
                     array(
                         '_isCallable',
                         '_randomBytes',
-                        '_generateUUIDFromData',
                     )
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->subject->expects($this->at(0))
+        $subject->expects($this->at(0))
             ->method('_isCallable')
             ->with($this->equalTo('random_bytes'))
             ->willReturn(true);
 
-        $this->subject->expects($this->at(1))
+        $subject->expects($this->at(1))
             ->method('_randomBytes')
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
 
-        $this->subject->expects($this->once())
-            ->method('_generateUUIDFromData')
-            ->with($this->equalTo('abcdefgh12345678'));
-
-        $this->subject->__construct(null);
+        $subject->__construct();
     }
 
     public function testgenerateUUIDWithOpenSSLRandomPseudoBytes()
     {
-        $this->subject =
+        $subject =
             $this->getMockBuilder('MonologCreator\Processor\RequestId')
                 ->setMethods(
                     array(
                         '_isCallable',
                         '_opensslRandomPseudoBytes',
-                        '_generateUUIDFromData',
                     )
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->subject->expects($this->at(0))
+        $subject->expects($this->at(0))
             ->method('_isCallable')
             ->with($this->equalTo('random_bytes'))
             ->willReturn(false);
-        $this->subject->expects($this->at(1))
+        $subject->expects($this->at(1))
             ->method('_isCallable')
             ->with($this->equalTo('openssl_random_pseudo_bytes'))
             ->willReturn(true);
 
-        $this->subject->expects($this->at(2))
+        $subject->expects($this->at(2))
             ->method('_opensslRandomPseudoBytes')
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
 
-        $this->subject->expects($this->once())
-            ->method('_generateUUIDFromData')
-            ->with($this->equalTo('abcdefgh12345678'));
-
-        $this->subject->__construct(null);
+        $subject->__construct(null);
     }
 
     public function testgenerateUUIDWithMtRand()
     {
-        $this->subject =
+        $subject =
             $this->getMockBuilder('MonologCreator\Processor\RequestId')
                 ->setMethods(
                     array(
                         '_isCallable',
                         '_generateBytesWithMtRand',
-                        '_generateUUIDFromData',
                     )
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->subject->expects($this->at(0))
+        $subject->expects($this->at(0))
             ->method('_isCallable')
             ->with($this->equalTo('random_bytes'))
             ->willReturn(false);
-        $this->subject->expects($this->at(1))
+        $subject->expects($this->at(1))
             ->method('_isCallable')
             ->with($this->equalTo('openssl_random_pseudo_bytes'))
             ->willReturn(false);
-        $this->subject->expects($this->at(2))
+        $subject->expects($this->at(2))
             ->method('_isCallable')
             ->with($this->equalTo('mt_rand'))
             ->willReturn(true);
 
-        $this->subject->expects($this->at(3))
+        $subject->expects($this->at(3))
             ->method('_generateBytesWithMtRand')
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
 
-        $this->subject->expects($this->once())
-            ->method('_generateUUIDFromData')
-            ->with($this->equalTo('abcdefgh12345678'));
-
-        $this->subject->__construct(null);
+        $subject->__construct(null);
     }
 
     public function testgenerateUUIDWithoutRNG()
     {
-        $this->subject =
+        $subject =
             $this->getMockBuilder('MonologCreator\Processor\RequestId')
                 ->setMethods(
                     array(
                         '_isCallable',
                         '_generateBytesWithMtRand',
-                        '_generateUUIDFromData',
                     )
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->subject->expects($this->at(0))
+        $subject->expects($this->at(0))
             ->method('_isCallable')
             ->with($this->equalTo('random_bytes'))
             ->willReturn(false);
-        $this->subject->expects($this->at(1))
+        $subject->expects($this->at(1))
             ->method('_isCallable')
             ->with($this->equalTo('openssl_random_pseudo_bytes'))
             ->willReturn(false);
-        $this->subject->expects($this->at(2))
+        $subject->expects($this->at(2))
             ->method('_isCallable')
             ->with($this->equalTo('mt_rand'))
             ->willReturn(false);
 
-        $this->subject->expects($this->never())
-            ->method('_generateUUIDFromData');
-
-        $this->subject->__construct(null);
+        $subject->__construct(null);
     }
 
     public function testgenerateBytesWithMtRand()
     {
-        $this->subject =
+        $subject =
             $this->getMockBuilder('MonologCreator\Processor\RequestId')
                 ->setMethods(
                     array(
                         '_isCallable',
-                        '_generateUUIDFromData',
                         '_mtRand',
                     )
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->subject->expects($this->at(0))
+        $subject->expects($this->at(0))
             ->method('_isCallable')
             ->with($this->equalTo('random_bytes'))
             ->willReturn(false);
-        $this->subject->expects($this->at(1))
+        $subject->expects($this->at(1))
             ->method('_isCallable')
             ->with($this->equalTo('openssl_random_pseudo_bytes'))
             ->willReturn(false);
-        $this->subject->expects($this->at(2))
+        $subject->expects($this->at(2))
             ->method('_isCallable')
             ->with($this->equalTo('mt_rand'))
             ->willReturn(true);
 
-        $this->subject->expects($this->exactly(16))
+        $subject->expects($this->exactly(16))
             ->method('_mtRand')
             ->with($this->equalTo(0), $this->equalTo(255))
             ->willReturn(97);
 
-        $this->subject->expects($this->once())
-            ->method('_generateUUIDFromData')
-            ->with($this->equalTo('aaaaaaaaaaaaaaaa'));
-
-        $this->subject->__construct(null);
+        $subject->__construct(null);
     }
 }
