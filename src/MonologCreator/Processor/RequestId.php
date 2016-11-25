@@ -10,15 +10,7 @@ class RequestId
     /**
      * @var string
      */
-    private $_uuid;
-
-    /**
-     * RequestId constructor.
-     */
-    public function __construct()
-    {
-        $this->_uuid = $this->_generateUUID();
-    }
+    private $_uuid = '';
 
     /**
      * Called by Monolog - Allows processors to manipulate data.
@@ -30,6 +22,9 @@ class RequestId
      */
     public function __invoke(array $record)
     {
+        if (true === empty($this->_uuid)) {
+            $this->_uuid = $this->_generateUUID();
+        }
         $record['extra']['request_id'] = $this->_uuid;
 
         return $record;

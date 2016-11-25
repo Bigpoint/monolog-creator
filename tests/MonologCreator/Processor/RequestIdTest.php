@@ -9,27 +9,25 @@ namespace MonologCreator\Processor;
 class RequestIdTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testConstructor()
-    {
-        $subject =
-            $this->getMockBuilder('MonologCreator\Processor\RequestId')
-                ->setMethods(
-                    array(
-                        '_generateUUID',
-                    )
-                )
-                ->getMock();
-        $subject->expects($this->once())
-            ->method('_generateUUID');
-        $subject->__construct();
-    }
-
     public function testInvoke()
     {
         $subject = new RequestId();
-        $record  = ['extra' => []];
+        $record  = array('extra' => array());
         $actual  = $subject->__invoke($record);
         $this->assertTrue(\array_key_exists('request_id', $actual['extra']));
+    }
+
+    public function testMultipleInvokesHaveSameID()
+    {
+        $subject = new RequestId();
+        $record  = array('extra' => array());
+        $actual1 = $subject->__invoke($record);
+        $actual2 = $subject->__invoke($record);
+        $this->assertTrue(\array_key_exists('request_id', $actual1['extra']));
+        $this->assertSame(
+            $actual1['extra']['request_id'],
+            $actual2['extra']['request_id']
+        );
     }
 
     /**
@@ -40,7 +38,7 @@ class RequestIdTest extends \PHPUnit_Framework_TestCase
     public function testGeneratedUUIDValid()
     {
         $subject = new RequestId();
-        $record  = ['extra' => []];
+        $record  = array('extra' => array());
         $actual  = $subject->__invoke($record);
         $UUID    = $actual['extra']['request_id'];
         $this->assertTrue(
@@ -74,7 +72,7 @@ class RequestIdTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
 
-        $subject->__construct();
+        $subject->__invoke(array('extra' => array()));
     }
 
     public function testgenerateUUIDWithOpenSSLRandomPseudoBytes()
@@ -104,7 +102,7 @@ class RequestIdTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
 
-        $subject->__construct(null);
+        $subject->__invoke(array('extra' => array()));
     }
 
     public function testgenerateUUIDWithMtRand()
@@ -138,7 +136,7 @@ class RequestIdTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
 
-        $subject->__construct(null);
+        $subject->__invoke(array('extra' => array()));
     }
 
     public function testgenerateUUIDWithoutRNG()
@@ -167,7 +165,7 @@ class RequestIdTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo('mt_rand'))
             ->willReturn(false);
 
-        $subject->__construct(null);
+        $subject->__invoke(array('extra' => array()));
     }
 
     public function testgenerateBytesWithMtRand()
@@ -201,6 +199,6 @@ class RequestIdTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(0), $this->equalTo(255))
             ->willReturn(97);
 
-        $subject->__construct(null);
+        $subject->__invoke(array('extra' => array()));
     }
 }
