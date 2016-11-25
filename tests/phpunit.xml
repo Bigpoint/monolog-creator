@@ -3,7 +3,6 @@
 <phpunit bootstrap="./bootstrap.php"
          colors="true"
          syntaxCheck="true"
-         strict="true"
          verbose="true">
 
     <testsuite name="Logger Test Suite">
@@ -15,5 +14,9 @@
             <directory suffix=".php">../src</directory>
         </whitelist>
     </filter>
+
+    <logging>
+        <log type="coverage-text" target="php://stdout" />
+    </logging>
 
 </phpunit>

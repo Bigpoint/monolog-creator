@@ -178,12 +178,13 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
             true
         );
 
-        $factory = new Factory($config);
-        $logger  = $factory->createLogger('test');
+        $factory    = new Factory($config);
+        $logger     = $factory->createLogger('test');
+        $processors = $logger->getProcessors();
 
         $this->assertInstanceOf(
             '\Monolog\Processor\WebProcessor',
-            $logger->getProcessors()[0]
+            $processors[0]
         );
     }
 
