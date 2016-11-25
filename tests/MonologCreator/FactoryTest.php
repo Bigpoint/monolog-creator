@@ -188,7 +188,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertInstanceOf(
             '\MonologCreator\Processor\RequestId',
-            $logger->getProcessors()[1]
+            $processors[1]
         );
     }
 
