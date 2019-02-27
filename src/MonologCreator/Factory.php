@@ -125,6 +125,7 @@ class Factory
             if ('web' === $processor) {
                 $webProcessor = new Monolog\Processor\WebProcessor();
                 $webProcessor->addExtraField('user_agent', 'HTTP_USER_AGENT');
+                $webProcessor->addExtraField('client_ip', 'HTTP_X_CLIENT_IP');
 
                 $processors[] = $webProcessor;
             } elseif ('requestId' === $processor) {
