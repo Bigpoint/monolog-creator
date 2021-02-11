@@ -130,9 +130,10 @@ class Factory
                 $processors[] = $webProcessor;
             } elseif ('requestId' === $processor) {
                 $processors[] = new Processor\RequestId();
-            } elseif ('extraField') {
+            } elseif ('extraField' === $processor) {
                 $extraFields = null;
-                if (is_array($loggerConfig['extraFields'])) {
+
+                if (true === \is_array($loggerConfig['extraFields'])) {
                     $extraFields = $loggerConfig['extraFields'];
                 }
 

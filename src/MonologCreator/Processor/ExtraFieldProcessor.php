@@ -1,6 +1,4 @@
 <?php
-
-
 namespace MonologCreator\Processor;
 
 /**
@@ -18,16 +16,11 @@ class ExtraFieldProcessor implements \Monolog\Processor\ProcessorInterface
      *
      * @var array
      */
-    protected $_extraFields = array();
+    private $extraFields = array();
 
-    /**
-     * ExtraFieldProcessor constructor.
-     *
-     * @param array|null $extraFields
-     */
     public function __construct(array $extraFields = array())
     {
-        $this->_extraFields = $extraFields;
+        $this->extraFields = $extraFields;
     }
 
     /**
@@ -40,12 +33,12 @@ class ExtraFieldProcessor implements \Monolog\Processor\ProcessorInterface
      */
     public function __invoke(array $record)
     {
-        if (!is_array($record['extra'])) {
+        if (false === \is_array($record['extra'])) {
             $record['extra'] = array();
         }
 
         // Add fields to record
-        $record['extra'] = array_merge($record['extra'], $this->_extraFields);
+        $record['extra'] = \array_merge($record['extra'], $this->extraFields);
 
         return $record;
     }

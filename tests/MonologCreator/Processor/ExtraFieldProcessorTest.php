@@ -9,7 +9,6 @@ namespace MonologCreator\Processor;
  */
 class ExtraFieldProcessorTestTest extends \PHPUnit_Framework_TestCase
 {
-
     public function testInvoke()
     {
         $fields = array(
