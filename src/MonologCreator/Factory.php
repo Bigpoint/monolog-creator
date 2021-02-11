@@ -130,6 +130,14 @@ class Factory
                 $processors[] = $webProcessor;
             } elseif ('requestId' === $processor) {
                 $processors[] = new Processor\RequestId();
+            } elseif ('extraField' === $processor) {
+                $extraFields = null;
+
+                if (true === \is_array($loggerConfig['extraFields'])) {
+                    $extraFields = $loggerConfig['extraFields'];
+                }
+
+                $processors[] = new Processor\ExtraFieldProcessor($extraFields);
             } else {
                 throw new MonologCreator\Exception(
                     'processor type: ' . $processor . ' is not supported'

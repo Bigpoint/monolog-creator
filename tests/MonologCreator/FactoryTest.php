@@ -170,7 +170,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
                     },
                     "test" : {
                         "handler" : ["stream"],
-                        "processors": ["web", "requestId"],
+                        "processors": ["web", "requestId", "extraField"],
                         "level" : "INFO"
                     }
                 }
@@ -189,6 +189,10 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(
             '\MonologCreator\Processor\RequestId',
             $processors[1]
+        );
+        $this->assertInstanceOf(
+            '\MonologCreator\Processor\ExtraFieldProcessor',
+            $processors[2]
         );
     }
 
