@@ -231,11 +231,28 @@ Injects a random UUID for each request to make multiple log messages from the sa
 }
 ~~~
 
+#### ExtraFieldProcessor
+Allows you to add high-level or specific fields to the logging data apart from the "ctxt_"-annotated ones. Those fields can be set using the _extraFields_ key in the logger configuration.
+
+**config.json**
+~~~ json
+"logger" : {
+    "test" : {
+        "processors" : ["extraField"],
+        "extraFields" : [
+            "extra_key1" : "extra_value1",
+            "extra_key2" : "extra_value2"
+        ],
+    }
+}
+~~~
+
 ## License & Authors
 - Authors:: Peter Ahrens (<pahrens@bigpoint.net>), Andreas Schleifer (<aschleifer@bigpoint.net>), Hendrik Meyer (hmeyer@bigpoint.net)
+- Contributors:: Sebastian Götze (<sgoetze@bigpoint.net>)
 
 ```text
-Copyright:: 2015-2016 Bigpoint GmbH
+Copyright:: 2015-2021 Bigpoint GmbH
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
