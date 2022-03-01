@@ -133,7 +133,7 @@ class Factory
             } elseif ('requestId' === $processor) {
                 $processors[] = new Processor\RequestId();
             } elseif ('extraField' === $processor) {
-                $extraFields = [];
+                $extraFields = array();
 
                 if (
                     true === array_key_exists('extraFields', $loggerConfig)

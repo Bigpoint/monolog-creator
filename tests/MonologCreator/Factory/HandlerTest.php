@@ -50,8 +50,8 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->mockPredisClient = $this->getMockBuilder('\Predis\Client')
-        ->disableOriginalConstructor()
-        ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
