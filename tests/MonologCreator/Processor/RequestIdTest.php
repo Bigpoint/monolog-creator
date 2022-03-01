@@ -56,20 +56,20 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
             $this->getMockBuilder('MonologCreator\Processor\RequestId')
                 ->setMethods(
                     array(
-                        '_isCallable',
-                        '_randomBytes',
+                        'isCallable',
+                        'randomBytes',
                     )
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $subject->expects($this->at(0))
-            ->method('_isCallable')
+            ->method('isCallable')
             ->with($this->equalTo('random_bytes'))
             ->willReturn(true);
 
         $subject->expects($this->at(1))
-            ->method('_randomBytes')
+            ->method('randomBytes')
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
 
@@ -82,24 +82,24 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
             $this->getMockBuilder('MonologCreator\Processor\RequestId')
                 ->setMethods(
                     array(
-                        '_isCallable',
-                        '_opensslRandomPseudoBytes',
+                        'isCallable',
+                        'opensslRandomPseudoBytes',
                     )
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $subject->expects($this->at(0))
-            ->method('_isCallable')
+            ->method('isCallable')
             ->with($this->equalTo('random_bytes'))
             ->willReturn(false);
         $subject->expects($this->at(1))
-            ->method('_isCallable')
+            ->method('isCallable')
             ->with($this->equalTo('openssl_random_pseudo_bytes'))
             ->willReturn(true);
 
         $subject->expects($this->at(2))
-            ->method('_opensslRandomPseudoBytes')
+            ->method('opensslRandomPseudoBytes')
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
 
@@ -112,28 +112,28 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
             $this->getMockBuilder('MonologCreator\Processor\RequestId')
                 ->setMethods(
                     array(
-                        '_isCallable',
-                        '_generateBytesWithMtRand',
+                        'isCallable',
+                        'generateBytesWithMtRand',
                     )
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $subject->expects($this->at(0))
-            ->method('_isCallable')
+            ->method('isCallable')
             ->with($this->equalTo('random_bytes'))
             ->willReturn(false);
         $subject->expects($this->at(1))
-            ->method('_isCallable')
+            ->method('isCallable')
             ->with($this->equalTo('openssl_random_pseudo_bytes'))
             ->willReturn(false);
         $subject->expects($this->at(2))
-            ->method('_isCallable')
+            ->method('isCallable')
             ->with($this->equalTo('mt_rand'))
             ->willReturn(true);
 
         $subject->expects($this->at(3))
-            ->method('_generateBytesWithMtRand')
+            ->method('generateBytesWithMtRand')
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
 
@@ -146,23 +146,23 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
             $this->getMockBuilder('MonologCreator\Processor\RequestId')
                 ->setMethods(
                     array(
-                        '_isCallable',
-                        '_generateBytesWithMtRand',
+                        'isCallable',
+                        'generateBytesWithMtRand',
                     )
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $subject->expects($this->at(0))
-            ->method('_isCallable')
+            ->method('isCallable')
             ->with($this->equalTo('random_bytes'))
             ->willReturn(false);
         $subject->expects($this->at(1))
-            ->method('_isCallable')
+            ->method('isCallable')
             ->with($this->equalTo('openssl_random_pseudo_bytes'))
             ->willReturn(false);
         $subject->expects($this->at(2))
-            ->method('_isCallable')
+            ->method('isCallable')
             ->with($this->equalTo('mt_rand'))
             ->willReturn(false);
 
@@ -175,28 +175,28 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
             $this->getMockBuilder('MonologCreator\Processor\RequestId')
                 ->setMethods(
                     array(
-                        '_isCallable',
-                        '_mtRand',
+                        'isCallable',
+                        'mtRand',
                     )
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $subject->expects($this->at(0))
-            ->method('_isCallable')
+            ->method('isCallable')
             ->with($this->equalTo('random_bytes'))
             ->willReturn(false);
         $subject->expects($this->at(1))
-            ->method('_isCallable')
+            ->method('isCallable')
             ->with($this->equalTo('openssl_random_pseudo_bytes'))
             ->willReturn(false);
         $subject->expects($this->at(2))
-            ->method('_isCallable')
+            ->method('isCallable')
             ->with($this->equalTo('mt_rand'))
             ->willReturn(true);
 
         $subject->expects($this->exactly(16))
-            ->method('_mtRand')
+            ->method('mtRand')
             ->with($this->equalTo(0), $this->equalTo(255))
             ->willReturn(97);
 
