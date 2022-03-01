@@ -13,10 +13,6 @@
         {
             "name": "Andreas Schleifer",
             "email": "aschleifer@bigpoint.net"
-        },
-        {
-            "name": "Hendrik Meyer",
-            "email": "hmeyer@bigpoint.net"
         }
     ],
     "support" : {
@@ -28,11 +24,16 @@
         "predis/predis": "1.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.*"
+        "phpunit/phpunit": "6.*"
     },
     "autoload": {
         "psr-0": {
             "MonologCreator\\": ["src/", "tests/"]
+        }
+    },
+    "config": {
+        "platform": {
+            "php":"7.0.0"
         }
     }
 }

@@ -10,7 +10,7 @@ class RequestId
     /**
      * @var string
      */
-    private $_uuid = '';
+    private $uuid = '';
 
     /**
      * Called by Monolog - Allows processors to manipulate data.
@@ -22,10 +22,10 @@ class RequestId
      */
     public function __invoke(array $record)
     {
-        if (true === empty($this->_uuid)) {
-            $this->_uuid = $this->_generateUUID();
+        if (true === empty($this->uuid)) {
+            $this->uuid = $this->generateUUID();
         }
-        $record['extra']['request_id'] = $this->_uuid;
+        $record['extra']['request_id'] = $this->uuid;
 
         return $record;
     }
@@ -35,24 +35,24 @@ class RequestId
      *
      * @return string valid UUIDv4
      */
-    protected function _generateUUID()
+    protected function generateUUID()
     {
         $data = null;
         switch (true) {
-            case $this->_isCallable('random_bytes'):
-                $data = $this->_randomBytes(16);
+            case $this->isCallable('random_bytes'):
+                $data = $this->randomBytes(16);
                 break;
-            case $this->_isCallable('openssl_random_pseudo_bytes'):
-                $data = $this->_opensslRandomPseudoBytes(16);
+            case $this->isCallable('openssl_random_pseudo_bytes'):
+                $data = $this->opensslRandomPseudoBytes(16);
                 break;
-            case $this->_isCallable('mt_rand'):
-                $data = $this->_generateBytesWithMtRand(16);
+            case $this->isCallable('mt_rand'):
+                $data = $this->generateBytesWithMtRand(16);
                 break;
             default:
                 return 'unavailable';
         }
 
-        return $this->_generateUUIDFromData($data);
+        return $this->generateUUIDFromData($data);
     }
 
     /**
@@ -63,7 +63,7 @@ class RequestId
      * @return string
      * @codeCoverageIgnore
      */
-    protected function _randomBytes($amt)
+    protected function randomBytes($amt)
     {
         return random_bytes($amt);
     }
@@ -76,7 +76,7 @@ class RequestId
      * @return string
      * @codeCoverageIgnore
      */
-    protected function _opensslRandomPseudoBytes($amt)
+    protected function opensslRandomPseudoBytes($amt)
     {
         return openssl_random_pseudo_bytes($amt);
     }
@@ -88,12 +88,12 @@ class RequestId
      *
      * @return string
      */
-    protected function _generateBytesWithMtRand($amt)
+    protected function generateBytesWithMtRand($amt)
     {
         $tmp = array();
 
         for ($idx = 0; $idx < $amt; $idx++) {
-            $tmp[] = chr($this->_mtRand(0, 255));
+            $tmp[] = chr($this->mtRand(0, 255));
         }
 
         return join('', $tmp);
@@ -108,7 +108,7 @@ class RequestId
      * @return int
      * @codeCoverageIgnore
      */
-    protected function _mtRand($min, $max)
+    protected function mtRand($min, $max)
     {
         return mt_rand($min, $max);
     }
@@ -121,7 +121,7 @@ class RequestId
      * @return bool
      * @codeCoverageIgnore
      */
-    protected function _isCallable($callable)
+    protected function isCallable($callable)
     {
         return is_callable($callable);
     }
@@ -137,7 +137,7 @@ class RequestId
      *
      * @return string           valid, formatted UUIDv4
      */
-    private function _generateUUIDFromData($data)
+    private function generateUUIDFromData($data)
     {
         $data = substr($data, 0, 16);
 

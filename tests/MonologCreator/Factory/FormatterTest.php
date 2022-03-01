@@ -1,4 +1,5 @@
 <?php
+
 namespace MonologCreator\Factory;
 
 /**
@@ -6,7 +7,7 @@ namespace MonologCreator\Factory;
  *
  * @package MonologCreator\Factory
  */
-class FormatterTest extends \PHPUnit_Framework_TestCase
+class FormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @expectedException \MonologCreator\Exception
@@ -209,7 +210,7 @@ class FormatterTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCreate()
+    public function testCreateLogstash()
     {
         $config = json_decode(
             '{
@@ -227,6 +228,26 @@ class FormatterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(
             '\Monolog\Formatter\LogstashFormatter',
+            $actual
+        );
+    }
+
+    public function testCreateJson()
+    {
+        $config = json_decode(
+            '{
+                "formatter" : {
+                    "json" : {}
+                }
+            }',
+            true
+        );
+
+        $factory = new Formatter($config);
+        $actual = $factory->create('json');
+
+        $this->assertInstanceOf(
+            '\Monolog\Formatter\JsonFormatter',
             $actual
         );
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace MonologCreator\Processor;
 
 /**
@@ -7,7 +8,7 @@ namespace MonologCreator\Processor;
  * @package MonologCreator\Processor
  * @author Sebastian Götze <s.goetze@bigpoint.net>
  */
-class ExtraFieldProcessorTestTest extends \PHPUnit_Framework_TestCase
+class ExtraFieldProcessorTestTest extends \PHPUnit\Framework\TestCase
 {
     public function testInvoke()
     {
