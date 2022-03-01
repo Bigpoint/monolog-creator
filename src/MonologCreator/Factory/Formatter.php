@@ -57,6 +57,10 @@ class Formatter
             return $this->createLine($formatterConfig);
         }
 
+        if ('json' === $formatterType) {
+            return $this->createJson($formatterConfig);
+        }
+
         throw new MonologCreator\Exception(
             'formatter type: ' . $formatterType . ' is not supported'
         );
@@ -137,6 +141,23 @@ class Formatter
         $formatter->allowInlineLineBreaks($allowInlineLineBreaks);
         $formatter->ignoreEmptyContextAndExtra($ignoreEmptyContextAndExtra);
 
+        return $formatter;
+    }
+
+    /**
+     * @param array $formatterConfig
+     *
+     * @return Monolog\Formatter\JsonFormatter
+     */
+    private function createJson(array $formatterConfig)
+    {
+        $batchMode     = Monolog\Formatter\JsonFormatter::BATCH_MODE_JSON;
+        $appendNewline = true;
+
+        $formatter = new Monolog\Formatter\JsonFormatter(
+            $batchMode,
+            $appendNewline
+        );
         return $formatter;
     }
 }
