@@ -1,8 +1,9 @@
 <?php
+
 namespace MonologCreator\Factory;
 
-use \MonologCreator;
-use \Monolog;
+use MonologCreator;
+use Monolog;
 
 /**
  * Class Formatter
@@ -14,14 +15,14 @@ class Formatter
     /**
      * @var array
      */
-    private $_config = array();
+    private $config = array();
 
     /**
      * @param array $config
      */
     public function __construct(array $config)
     {
-        $this->_config = $config;
+        $this->config = $config;
     }
 
     /**
@@ -33,27 +34,27 @@ class Formatter
      */
     public function create($formatterType)
     {
-        if (false === array_key_exists('formatter', $this->_config)) {
+        if (false === array_key_exists('formatter', $this->config)) {
             throw new MonologCreator\Exception(
                 'no formatter configuration found'
             );
         }
 
-        if (false === array_key_exists($formatterType, $this->_config['formatter'])) {
+        if (false === array_key_exists($formatterType, $this->config['formatter'])) {
             throw new MonologCreator\Exception(
                 'no formatter configuration found for formatterType: '
                 . $formatterType
             );
         }
 
-        $formatterConfig = $this->_config['formatter'][$formatterType];
+        $formatterConfig = $this->config['formatter'][$formatterType];
 
         if ('logstash' === $formatterType) {
-            return $this->_createLogstash($formatterConfig);
+            return $this->createLogstash($formatterConfig);
         }
 
         if ('line' === $formatterType) {
-            return $this->_createLine($formatterConfig);
+            return $this->createLine($formatterConfig);
         }
 
         throw new MonologCreator\Exception(
@@ -68,7 +69,7 @@ class Formatter
      *
      * @throws MonologCreator\Exception
      */
-    private function _createLogstash(array $formatterConfig)
+    private function createLogstash(array $formatterConfig)
     {
         if (false === array_key_exists('type', $formatterConfig)) {
             throw new MonologCreator\Exception(
@@ -90,7 +91,7 @@ class Formatter
      *
      * @return Monolog\Formatter\LineFormatter
      */
-    private function _createLine(array $formatterConfig)
+    private function createLine(array $formatterConfig)
     {
         $boolValues = array(
             'true'  => true,
@@ -108,21 +109,24 @@ class Formatter
         }
 
         $includeStacktraces = false;
-        if (true === array_key_exists('includeStacktraces', $formatterConfig)
+        if (
+            true === array_key_exists('includeStacktraces', $formatterConfig)
             && true === array_key_exists($formatterConfig['includeStacktraces'], $boolValues)
         ) {
             $includeStacktraces = $boolValues[$formatterConfig['includeStacktraces']];
         }
 
         $allowInlineLineBreaks = false;
-        if (true === array_key_exists('allowInlineLineBreaks', $formatterConfig)
+        if (
+            true === array_key_exists('allowInlineLineBreaks', $formatterConfig)
             && true === array_key_exists($formatterConfig['allowInlineLineBreaks'], $boolValues)
         ) {
             $allowInlineLineBreaks = $boolValues[$formatterConfig['allowInlineLineBreaks']];
         }
 
         $ignoreEmptyContextAndExtra = false;
-        if (true === array_key_exists('ignoreEmptyContextAndExtra', $formatterConfig)
+        if (
+            true === array_key_exists('ignoreEmptyContextAndExtra', $formatterConfig)
             && true === array_key_exists($formatterConfig['ignoreEmptyContextAndExtra'], $boolValues)
         ) {
             $ignoreEmptyContextAndExtra = $boolValues[$formatterConfig['ignoreEmptyContextAndExtra']];

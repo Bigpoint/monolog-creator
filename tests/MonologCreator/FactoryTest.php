@@ -1,4 +1,5 @@
 <?php
+
 namespace MonologCreator;
 
 /**
@@ -6,40 +7,8 @@ namespace MonologCreator;
  *
  * @package MonologCreator
  */
-class FactoryTest extends \PHPUnit_Framework_TestCase
+class FactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $_mockFormatterFactory = null;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $_mockHandlerFactory = null;
-
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->_mockFormatterFactory = $this->getMock(
-            '\MonologCreator\Factory\Formatter',
-            array(),
-            array(),
-            '',
-            false
-        );
-        $this->_mockHandlerFactory = $this->getMock(
-            '\MonologCreator\Factory\Handler',
-            array(
-                'create',
-            ),
-            array(),
-            '',
-            false
-        );
-    }
-
     public function testCreateDefaultLogger()
     {
         $configString = '{

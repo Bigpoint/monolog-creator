@@ -1,72 +1,57 @@
 <?php
+
 namespace MonologCreator\Factory;
 
-use \Monolog;
+use Monolog;
 
 /**
  * Class HandlerTest
  *
  * @package MonologCreator\Factory
  */
-class HandlerTest extends \PHPUnit_Framework_TestCase
+class HandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $_mockFormatterFactory = null;
+    private $mockFormatterFactory = null;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $_mockFormatter = null;
+    private $mockFormatter = null;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $_mockUdpSocket = null;
+    private $mockUdpSocket = null;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $_mockPredisClient = null;
+    private $mockPredisClient = null;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->_mockFormatterFactory = $this->getMock(
-            '\MonologCreator\Factory\Formatter',
-            array(
-                'create',
-            ),
-            array(),
-            '',
-            false
-        );
-        $this->_mockFormatter = $this->getMock(
-            '\Monolog\Formatter\FormatterInterface',
-            array(
-                'format',
-                'formatBatch',
-            ),
-            array(),
-            '',
-            false
-        );
-        $this->_mockUdpSocket = $this->getMock(
-            '\Monolog\Handler\SyslogUdp\UdpSocket',
-            array(),
-            array(),
-            '',
-            false
-        );
-        $this->_mockPredisClient = $this->getMock(
-            '\Predis\Client',
-            array(),
-            array(),
-            '',
-            false
-        );
+        $this->mockFormatterFactory = $this->getMockBuilder('\MonologCreator\Factory\Formatter')
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+
+        $this->mockFormatter = $this->getMockBuilder('\Monolog\Formatter\FormatterInterface')
+            ->disableOriginalConstructor()
+            ->setMethods(['format', 'formatBatch'])
+            ->getMock();
+
+        $this->mockUdpSocket = $this->getMockBuilder('\Monolog\Handler\SyslogUdp\UdpSocket')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->mockPredisClient = $this->getMockBuilder('\Predis\Client')
+        ->disableOriginalConstructor()
+        ->getMock();
     }
 
     /**
@@ -75,7 +60,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateFailNoConfig()
     {
-        $factory = new Handler(array(), array(), $this->_mockFormatterFactory);
+        $factory = new Handler(array(), array(), $this->mockFormatterFactory);
         $factory->create('mockHandler', 'INFO');
     }
 
@@ -96,7 +81,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             true
         );
 
-        $factory = new Handler($config, array(), $this->_mockFormatterFactory);
+        $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('mockHandler', 'INFO');
     }
 
@@ -117,7 +102,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             true
         );
 
-        $factory = new Handler($config, array(), $this->_mockFormatterFactory);
+        $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('mockHandler', 'INFO');
     }
 
@@ -136,7 +121,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             true
         );
 
-        $factory = new Handler($config, array(), $this->_mockFormatterFactory);
+        $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('stream', 'INFO');
     }
 
@@ -158,7 +143,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             array(
                 'INFO' => Monolog\Logger::INFO,
             ),
-            $this->_mockFormatterFactory
+            $this->mockFormatterFactory
         );
         $handler = $factory->create('stream', 'INFO');
 
@@ -172,7 +157,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
      * @expectedException \MonologCreator\Exception
      * @expectedExceptionMessage host configuration for udp handler is missing
      */
-    public function testCreateUdbFailNoHost()
+    public function testCreateUdpFailNoHost()
     {
         $config = json_decode(
             '{
@@ -183,7 +168,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             true
         );
 
-        $factory = new Handler($config, array(), $this->_mockFormatterFactory);
+        $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('udp', 'INFO');
     }
 
@@ -191,7 +176,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
      * @expectedException \MonologCreator\Exception
      * @expectedExceptionMessage port configuration for udp handler is missing
      */
-    public function testCreateUdbFailNoPort()
+    public function testCreateUdpFailNoPort()
     {
         $config = json_decode(
             '{
@@ -204,11 +189,11 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             true
         );
 
-        $factory = new Handler($config, array(), $this->_mockFormatterFactory);
+        $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('udp', 'INFO');
     }
 
-    public function testCreateUdb()
+    public function testCreateUdp()
     {
         $config = json_decode(
             '{
@@ -223,27 +208,26 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             true
         );
 
-        $factory = $this->getMock(
-            '\MonologCreator\Factory\Handler',
-            array(
-                '_createUdpSocket',
-            ),
-            array(
-                $config,
-                array(
-                    'INFO' => Monolog\Logger::INFO,
-                ),
-                $this->_mockFormatterFactory,
+        $factory = $this->getMockBuilder('\MonologCreator\Factory\Handler')
+            ->setConstructorArgs(
+                [
+                    $config,
+                    array(
+                        'INFO' => Monolog\Logger::INFO,
+                    ),
+                    $this->mockFormatterFactory,
+                ]
             )
-        );
+            ->setMethods(['createUdpSocket'])
+            ->getMock();
 
         $factory->expects($this->exactly(1))
-            ->method('_createUdpSocket')
+            ->method('createUdpSocket')
             ->with(
                 $this->equalTo('192.168.50.48'),
                 $this->equalTo('9999')
             )
-            ->will($this->returnValue($this->_mockUdpSocket));
+            ->will($this->returnValue($this->mockUdpSocket));
 
         $handler = $factory->create('udp', 'INFO');
 
@@ -255,11 +239,11 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateWithFormatter()
     {
-        $this->_mockFormatterFactory
+        $this->mockFormatterFactory
             ->expects($this->exactly(1))
             ->method('create')
             ->with($this->equalTo('logstash'))
-            ->will($this->returnValue($this->_mockFormatter));
+            ->will($this->returnValue($this->mockFormatter));
 
         $config = json_decode(
             '{
@@ -283,7 +267,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             array(
                 'INFO' => Monolog\Logger::INFO,
             ),
-            $this->_mockFormatterFactory
+            $this->mockFormatterFactory
         );
         $handler = $factory->create('stream', 'INFO');
 
@@ -313,7 +297,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             true
         );
 
-        $factory = new Handler($config, array(), $this->_mockFormatterFactory);
+        $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('redis', 'INFO');
     }
 
@@ -334,7 +318,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             true
         );
 
-        $factory = new Handler($config, array(), $this->_mockFormatterFactory);
+        $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('redis', 'INFO');
     }
 
@@ -352,24 +336,23 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             true
         );
 
-        $factory = $this->getMock(
-            '\MonologCreator\Factory\Handler',
-            array(
-                '_createPredisClient',
-            ),
-            array(
-                $config,
-                array(
-                    'INFO' => Monolog\Logger::INFO,
-                ),
-                $this->_mockFormatterFactory,
+        $factory = $this->getMockBuilder('\MonologCreator\Factory\Handler')
+            ->setConstructorArgs(
+                [
+                    $config,
+                    array(
+                        'INFO' => Monolog\Logger::INFO,
+                    ),
+                    $this->mockFormatterFactory,
+                ]
             )
-        );
+            ->setMethods(['createPredisClient'])
+            ->getMock();
 
         $factory->expects($this->exactly(1))
-            ->method('_createPredisClient')
+            ->method('createPredisClient')
             ->with($this->equalTo('mockUrl'))
-            ->will($this->returnValue($this->_mockPredisClient));
+            ->will($this->returnValue($this->mockPredisClient));
 
         $factory->create('redis', 'INFO');
     }

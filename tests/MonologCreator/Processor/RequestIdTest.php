@@ -1,4 +1,5 @@
 <?php
+
 namespace MonologCreator\Processor;
 
 /**
@@ -6,7 +7,7 @@ namespace MonologCreator\Processor;
  *
  * @package MonologCreator\Factory
  */
-class RequestIdTest extends \PHPUnit_Framework_TestCase
+class RequestIdTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testInvoke()

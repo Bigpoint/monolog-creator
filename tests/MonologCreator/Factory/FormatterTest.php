@@ -1,4 +1,5 @@
 <?php
+
 namespace MonologCreator\Factory;
 
 /**
@@ -6,7 +7,7 @@ namespace MonologCreator\Factory;
  *
  * @package MonologCreator\Factory
  */
-class FormatterTest extends \PHPUnit_Framework_TestCase
+class FormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @expectedException \MonologCreator\Exception

@@ -1,8 +1,9 @@
 <?php
+
 namespace MonologCreator;
 
-use \MonologCreator;
-use \Monolog;
+use MonologCreator;
+use Monolog;
 
 /**
  * Factory class to for creating monolog loggers with preconfigurated array
@@ -12,12 +13,12 @@ class Factory
     /**
      * @var array
      */
-    private $_config = array();
+    private $config = array();
 
     /**
      * @var array
      */
-    private $_levels = array(
+    private $levels = array(
         'DEBUG'     => Monolog\Logger::DEBUG,
         'INFO'      => Monolog\Logger::INFO,
         'NOTICE'    => Monolog\Logger::NOTICE,
@@ -33,14 +34,14 @@ class Factory
      *
      * @var array
      */
-    private $_logger = array();
+    private $logger = array();
 
     /**
      * @param array $config
      */
     public function __construct(array $config)
     {
-        $this->_config = $config;
+        $this->config = $config;
     }
 
     /**
@@ -56,11 +57,11 @@ class Factory
     public function createLogger($name)
     {
         // short circuit for cached logger objects
-        if (true === array_key_exists($name, $this->_logger)) {
-            return $this->_logger[$name];
+        if (true === array_key_exists($name, $this->logger)) {
+            return $this->logger[$name];
         }
 
-        $loggerConfig  = $this->_getLoggerConfig($name);
+        $loggerConfig  = $this->getLoggerConfig($name);
         $handlers      = $this->createHandlers($loggerConfig);
         $processors    = $this->createProcessors($loggerConfig);
         $logger        = new Monolog\Logger(
@@ -70,7 +71,7 @@ class Factory
         );
 
         // cache created logger
-        $this->_logger[$name] = $logger;
+        $this->logger[$name] = $logger;
 
         return $logger;
     }
@@ -86,11 +87,11 @@ class Factory
     {
         $handlers         = array();
         $formatterFactory = new MonologCreator\Factory\Formatter(
-            $this->_config
+            $this->config
         );
         $handlerFactory   = new MonologCreator\Factory\Handler(
-            $this->_config,
-            $this->_levels,
+            $this->config,
+            $this->levels,
             $formatterFactory
         );
 
@@ -115,7 +116,8 @@ class Factory
     {
         $processors = array();
 
-        if (false === array_key_exists('processors', $loggerConfig)
+        if (
+            false === array_key_exists('processors', $loggerConfig)
             || false === is_array($loggerConfig['processors'])
         ) {
             return $processors;
@@ -131,9 +133,12 @@ class Factory
             } elseif ('requestId' === $processor) {
                 $processors[] = new Processor\RequestId();
             } elseif ('extraField' === $processor) {
-                $extraFields = null;
+                $extraFields = [];
 
-                if (true === \is_array($loggerConfig['extraFields'])) {
+                if (
+                    true === array_key_exists('extraFields', $loggerConfig)
+                    && true === \is_array($loggerConfig['extraFields'])
+                ) {
                     $extraFields = $loggerConfig['extraFields'];
                 }
 
@@ -155,22 +160,22 @@ class Factory
      *
      * @throws MonologCreator\Exception
      */
-    private function _getLoggerConfig($name)
+    private function getLoggerConfig($name)
     {
-        if (false === array_key_exists('logger', $this->_config)) {
+        if (false === array_key_exists('logger', $this->config)) {
             throw new MonologCreator\Exception("no logger configuration found");
         }
 
-        if (false === array_key_exists('_default', $this->_config['logger'])) {
+        if (false === array_key_exists('_default', $this->config['logger'])) {
             throw new MonologCreator\Exception(
                 "no configuration found for logger: _default"
             );
         }
 
-        $loggerConfig = $this->_config['logger']['_default'];
+        $loggerConfig = $this->config['logger']['_default'];
 
-        if (true === array_key_exists($name, $this->_config['logger'])) {
-            $loggerConfig  = $this->_config['logger'][$name];
+        if (true === array_key_exists($name, $this->config['logger'])) {
+            $loggerConfig  = $this->config['logger'][$name];
         }
 
         if (false === array_key_exists('handler', $loggerConfig)) {
@@ -185,7 +190,7 @@ class Factory
             );
         }
 
-        if (false === array_key_exists($loggerConfig['level'], $this->_levels)) {
+        if (false === array_key_exists($loggerConfig['level'], $this->levels)) {
             throw new MonologCreator\Exception(
                 "invalid level: " . $loggerConfig['level']
             );
