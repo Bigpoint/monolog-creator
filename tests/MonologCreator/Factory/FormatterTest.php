@@ -210,7 +210,7 @@ class FormatterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCreate()
+    public function testCreateLogstash()
     {
         $config = json_decode(
             '{
@@ -228,6 +228,26 @@ class FormatterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf(
             '\Monolog\Formatter\LogstashFormatter',
+            $actual
+        );
+    }
+
+    public function testCreateJson()
+    {
+        $config = json_decode(
+            '{
+                "formatter" : {
+                    "json" : {}
+                }
+            }',
+            true
+        );
+
+        $factory = new Formatter($config);
+        $actual = $factory->create('json');
+
+        $this->assertInstanceOf(
+            '\Monolog\Formatter\JsonFormatter',
             $actual
         );
     }
