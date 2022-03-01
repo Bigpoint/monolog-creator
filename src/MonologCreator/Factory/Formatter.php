@@ -151,13 +151,6 @@ class Formatter
      */
     private function createJson(array $formatterConfig)
     {
-        $batchMode     = Monolog\Formatter\JsonFormatter::BATCH_MODE_JSON;
-        $appendNewline = true;
-
-        $formatter = new Monolog\Formatter\JsonFormatter(
-            $batchMode,
-            $appendNewline
-        );
-        return $formatter;
+        return new Monolog\Formatter\JsonFormatter();
     }
 }

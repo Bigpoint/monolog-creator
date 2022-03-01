@@ -100,7 +100,7 @@ $logger->addDebug('I am a debug message');
 You can configure log output with a formatter
 
 **config.json**
-~~~ json
+~~~ logstash
 {
     "handler" : {
         "stream" : {
@@ -179,13 +179,12 @@ You can optionally add processors to your logger
 
 ### supported formatter:
 
-#### LogstashFormatter
+#### JsonFormatter
+Currently no options are supported here.
 **config.json**
 ~~~ json
 "formatter" : {
-    "logstash" : {
-        "type" : "test-app"
-    }
+    "json" : {}
 }
 ~~~
 
@@ -206,6 +205,15 @@ and `ignoreEmptyContextAndExtra` can be `"true"` or `"false"`.
 }
 ~~~
 
+#### LogstashFormatter
+**config.json**
+~~~ json
+"formatter" : {
+    "logstash" : {
+        "type" : "test-app"
+    }
+}
+~~~
 
 ### supported processors:
 
@@ -220,7 +228,7 @@ and `ignoreEmptyContextAndExtra` can be `"true"` or `"false"`.
 ~~~
 
 #### RequestID Processor
-Injects a random UUID for each request to make multiple log messages from the same request easier to follow. 
+Injects a random UUID for each request to make multiple log messages from the same request easier to follow.
 
 **config.json**
 ~~~ json
