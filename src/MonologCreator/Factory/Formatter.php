@@ -84,9 +84,8 @@ class Formatter
         return new Monolog\Formatter\LogstashFormatter(
             $formatterConfig['type'],
             null,
-            null,
-            'ctxt_',
-            Monolog\Formatter\LogstashFormatter::V1
+            'extra_',
+            'ctxt_'
         );
     }
 

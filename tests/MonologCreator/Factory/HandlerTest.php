@@ -31,7 +31,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $mockPredisClient = null;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -54,20 +54,15 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             ->getMock();
     }
 
-    /**
-     * @expectedException \MonologCreator\Exception
-     * @expectedExceptionMessage no handler configuration found
-     */
     public function testCreateFailNoConfig()
     {
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('no handler configuration found');
+
         $factory = new Handler(array(), array(), $this->mockFormatterFactory);
         $factory->create('mockHandler', 'INFO');
     }
 
-    /**
-     * @expectedException \MonologCreator\Exception
-     * @expectedExceptionMessage no handler configuration found for handlerType: mockHandler
-     */
     public function testCreateFailWrongHandlerType()
     {
         $config = json_decode(
@@ -81,14 +76,13 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             true
         );
 
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('no handler configuration found for handlerType: mockHandler');
+
         $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('mockHandler', 'INFO');
     }
 
-    /**
-     * @expectedException \MonologCreator\Exception
-     * @expectedExceptionMessage handler type: mockHandler is not supported
-     */
     public function testCreateFailNotSupported()
     {
         $config = json_decode(
@@ -102,14 +96,13 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             true
         );
 
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('handler type: mockHandler is not supported');
+
         $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('mockHandler', 'INFO');
     }
 
-    /**
-     * @expectedException \MonologCreator\Exception
-     * @expectedExceptionMessage path configuration for stream handler is missing
-     */
     public function testCreateStreamHandlerFail()
     {
         $config = json_decode(
@@ -120,6 +113,9 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             }',
             true
         );
+
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('path configuration for stream handler is missing');
 
         $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('stream', 'INFO');
@@ -153,10 +149,6 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \MonologCreator\Exception
-     * @expectedExceptionMessage host configuration for udp handler is missing
-     */
     public function testCreateUdpFailNoHost()
     {
         $config = json_decode(
@@ -168,14 +160,13 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             true
         );
 
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('host configuration for udp handler is missing');
+
         $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('udp', 'INFO');
     }
 
-    /**
-     * @expectedException \MonologCreator\Exception
-     * @expectedExceptionMessage port configuration for udp handler is missing
-     */
     public function testCreateUdpFailNoPort()
     {
         $config = json_decode(
@@ -188,6 +179,9 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             }',
             true
         );
+
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('port configuration for udp handler is missing');
 
         $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('udp', 'INFO');
@@ -282,10 +276,6 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \MonologCreator\Exception
-     * @expectedExceptionMessage url configuration for redis handler is missing
-     */
     public function testCreateRedisFailNoUrl()
     {
         $config = json_decode(
@@ -297,14 +287,13 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             true
         );
 
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('url configuration for redis handler is missing');
+
         $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('redis', 'INFO');
     }
 
-    /**
-     * @expectedException \MonologCreator\Exception
-     * @expectedExceptionMessage key configuration for redis handler is missing
-     */
     public function testCreateRedisFailNoKey()
     {
         $config = json_decode(
@@ -317,6 +306,9 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             }',
             true
         );
+
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('key configuration for redis handler is missing');
 
         $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('redis', 'INFO');

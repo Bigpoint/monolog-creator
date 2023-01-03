@@ -12,34 +12,21 @@ namespace MonologCreator\Processor;
  */
 class ExtraFieldProcessor implements \Monolog\Processor\ProcessorInterface
 {
-    /**
-     * Array to hold additional fields
-     *
-     * @var array
-     */
-    private $extraFields = array();
-
-    public function __construct(array $extraFields = array())
-    {
-        $this->extraFields = $extraFields;
-    }
+    public function __construct(
+        private array $extraFields = array()
+    ) {}
 
     /**
-     * Invoke processor
-     *
-     * Adds fields to record before returning it.
-     *
-     * @param array $record
-     * @return array
+     * Adds extra fields to the record.
      */
-    public function __invoke(array $record)
+    public function __invoke(\Monolog\LogRecord $record): \Monolog\LogRecord
     {
-        if (false === \is_array($record['extra'])) {
-            $record['extra'] = array();
+        if (false === \is_array($record->extra)) {
+            $record->extra = array();
         }
 
         // Add fields to record
-        $record['extra'] = \array_merge($record['extra'], $this->extraFields);
+        $record->extra = \array_merge($record->extra, $this->extraFields);
 
         return $record;
     }

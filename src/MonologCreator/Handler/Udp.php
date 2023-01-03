@@ -12,52 +12,32 @@ namespace MonologCreator\Handler;
  */
 class Udp extends \Monolog\Handler\AbstractProcessingHandler
 {
-    /**
-     * @var \Monolog\Handler\SyslogUdp\UdpSocket
-     */
-    private $_socket = null;
-
-    /**
-     * @param \Monolog\Handler\SyslogUdp\UdpSocket $socket
-     * @param bool|int                             $level
-     * @param bool                                 $bubble
-     */
     public function __construct(
-        \Monolog\Handler\SyslogUdp\UdpSocket $socket,
-        $level = \Monolog\Logger::DEBUG,
-        $bubble = true
+        private \Monolog\Handler\SyslogUdp\UdpSocket $socket,
+        int|string|\Monolog\Level $level = \Monolog\Level::DEBUG,
+        bool $bubble = true
     ) {
         parent::__construct($level, $bubble);
-
-        $this->_socket = $socket;
     }
 
     /**
      * @param array $record
      */
-    protected function write(array $record)
+    protected function write(\Monolog\LogRecord $record): void
     {
-        $lines = $this->splitMessageIntoLines($record['formatted']);
+        $lines = $this->splitMessageIntoLines($record->formatted);
 
         foreach ($lines as $line) {
             $this->_socket->write($line);
         }
     }
 
-    /**
-     * @return null
-     */
-    public function close()
+    public function close(): void
     {
         $this->_socket->close();
     }
 
-    /**
-     * @param $message
-     *
-     * @return array
-     */
-    private function splitMessageIntoLines($message)
+    private function splitMessageIntoLines(mixed $message): array
     {
         if (is_array($message)) {
             $message = implode("\n", $message);
@@ -66,12 +46,7 @@ class Udp extends \Monolog\Handler\AbstractProcessingHandler
         return preg_split('/$\R?^/m', $message);
     }
 
-    /**
-     * Inject your own socket, mainly used for testing.
-     *
-     * @param \Monolog\Handler\SyslogUdp\UdpSocket $socket
-     */
-    public function setSocket($socket)
+    public function setSocket(\Monolog\Handler\SyslogUdp\UdpSocket $socket): void
     {
         $this->_socket = $socket;
     }

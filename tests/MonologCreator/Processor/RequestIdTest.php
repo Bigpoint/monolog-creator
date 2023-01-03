@@ -63,12 +63,12 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $subject->expects($this->at(0))
+        $subject->expects($this->once())
             ->method('isCallable')
             ->with($this->equalTo('random_bytes'))
             ->willReturn(true);
 
-        $subject->expects($this->at(1))
+        $subject->expects($this->once())
             ->method('randomBytes')
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
@@ -89,16 +89,18 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $subject->expects($this->at(0))
+        $subject->expects($this->exactly(2))
             ->method('isCallable')
-            ->with($this->equalTo('random_bytes'))
-            ->willReturn(false);
-        $subject->expects($this->at(1))
-            ->method('isCallable')
-            ->with($this->equalTo('openssl_random_pseudo_bytes'))
-            ->willReturn(true);
+            ->withConsecutive(
+                [$this->equalTo('random_bytes')],
+                [$this->equalTo('openssl_random_pseudo_bytes')]
+            )
+            ->willReturnOnConsecutiveCalls(
+                false,
+                true
+            );
 
-        $subject->expects($this->at(2))
+        $subject->expects($this->once())
             ->method('opensslRandomPseudoBytes')
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
@@ -118,21 +120,21 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
+        
+        $subject->expects($this->exactly(3))
+        ->method('isCallable')
+        ->withConsecutive(
+            [$this->equalTo('random_bytes')],
+            [$this->equalTo('openssl_random_pseudo_bytes')],
+            [$this->equalTo('mt_rand')]
+        )
+        ->willReturnOnConsecutiveCalls(
+            false,
+            false,
+            true
+        );
 
-        $subject->expects($this->at(0))
-            ->method('isCallable')
-            ->with($this->equalTo('random_bytes'))
-            ->willReturn(false);
-        $subject->expects($this->at(1))
-            ->method('isCallable')
-            ->with($this->equalTo('openssl_random_pseudo_bytes'))
-            ->willReturn(false);
-        $subject->expects($this->at(2))
-            ->method('isCallable')
-            ->with($this->equalTo('mt_rand'))
-            ->willReturn(true);
-
-        $subject->expects($this->at(3))
+        $subject->expects($this->once())
             ->method('generateBytesWithMtRand')
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
@@ -152,19 +154,19 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
-
-        $subject->expects($this->at(0))
-            ->method('isCallable')
-            ->with($this->equalTo('random_bytes'))
-            ->willReturn(false);
-        $subject->expects($this->at(1))
-            ->method('isCallable')
-            ->with($this->equalTo('openssl_random_pseudo_bytes'))
-            ->willReturn(false);
-        $subject->expects($this->at(2))
-            ->method('isCallable')
-            ->with($this->equalTo('mt_rand'))
-            ->willReturn(false);
+        
+        $subject->expects($this->exactly(3))
+        ->method('isCallable')
+        ->withConsecutive(
+            [$this->equalTo('random_bytes')],
+            [$this->equalTo('openssl_random_pseudo_bytes')],
+            [$this->equalTo('mt_rand')]
+        )
+        ->willReturnOnConsecutiveCalls(
+            false,
+            false,
+            false
+        );
 
         $subject->__invoke(array('extra' => array()));
     }
@@ -182,18 +184,18 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $subject->expects($this->at(0))
-            ->method('isCallable')
-            ->with($this->equalTo('random_bytes'))
-            ->willReturn(false);
-        $subject->expects($this->at(1))
-            ->method('isCallable')
-            ->with($this->equalTo('openssl_random_pseudo_bytes'))
-            ->willReturn(false);
-        $subject->expects($this->at(2))
-            ->method('isCallable')
-            ->with($this->equalTo('mt_rand'))
-            ->willReturn(true);
+        $subject->expects($this->exactly(3))
+        ->method('isCallable')
+        ->withConsecutive(
+            [$this->equalTo('random_bytes')],
+            [$this->equalTo('openssl_random_pseudo_bytes')],
+            [$this->equalTo('mt_rand')]
+        )
+        ->willReturnOnConsecutiveCalls(
+            false,
+            false,
+            true
+        );
 
         $subject->expects($this->exactly(16))
             ->method('mtRand')

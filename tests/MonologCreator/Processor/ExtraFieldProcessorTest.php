@@ -8,16 +8,23 @@ namespace MonologCreator\Processor;
  * @package MonologCreator\Processor
  * @author Sebastian Götze <s.goetze@bigpoint.net>
  */
-class ExtraFieldProcessorTestTest extends \PHPUnit\Framework\TestCase
+class ExtraFieldProcessorTest extends \PHPUnit\Framework\TestCase
 {
     public function testInvoke()
     {
         $fields = array(
             'test_field' => 'test'
         );
+
         $subject = new ExtraFieldProcessor($fields);
-        $record  = array('extra' => array());
+        $record  = new \Monolog\LogRecord(
+            new \DateTimeImmutable(),
+            'testChannel',
+            \Monolog\Level::Debug,
+            'testMessage',
+        );
         $actual  = $subject->__invoke($record);
+
         $this->assertTrue(\array_key_exists('test_field', $actual['extra']));
         $this->assertTrue($actual['extra']['test_field'] === 'test');
     }
