@@ -166,11 +166,16 @@ You can optionally add processors to your logger
 ~~~
 
 #### RedisHandler (with [predis/predis](https://packagist.org/packages/predis/predis))
+To use the Redis handler, you have to create the Predis client object yourself and set it to the Factory, before creating any logger.
+~~~php
+$predisClient = new \Predis\Client('tcp://192.168.42.43:6379');
+$loggerFactory->setPredisClient($predisClient);
+~~~
+
 **config.json**
 ~~~ json
 "handler" : {
     "redis" : {
-        "url" : "tcp://192.168.42.43:6379",
         "key" : "redisLogKey",
     }
 }

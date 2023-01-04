@@ -13,7 +13,8 @@ class Handler
     public function __construct(
         private array $config,
         private array $levels,
-        private MonologCreator\Factory\Formatter $formatterFactory
+        private MonologCreator\Factory\Formatter $formatterFactory,
+        private \Predis\Client|null $predisClient = null
     ) {
     }
 
@@ -122,30 +123,22 @@ class Handler
      */
     private function createRedisHandler(array $handlerConfig, string $level): Monolog\Handler\RedisHandler
     {
-        if (false === array_key_exists('url', $handlerConfig)) {
-            throw new MonologCreator\Exception(
-                'url configuration for redis handler is missing'
-            );
-        }
-
         if (false === array_key_exists('key', $handlerConfig)) {
             throw new MonologCreator\Exception(
                 'key configuration for redis handler is missing'
             );
         }
 
+        if ($this->predisClient === null) {
+            throw new MonologCreator\Exception(
+                'predis client object is not set'
+            );
+        }
+
         return new Monolog\Handler\RedisHandler(
-            $this->createPredisClient($handlerConfig['url']),
+            $this->predisClient,
             $handlerConfig['key'],
             $this->levels[$level]
         );
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    protected function createPredisClient(string $url): \Predis\Client
-    {
-        return new \Predis\Client($url);
     }
 }

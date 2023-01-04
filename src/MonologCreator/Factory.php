@@ -25,6 +25,12 @@ class Factory
     ];
 
     /**
+     * optional, only needed for the redis handler
+     * @param \Predis\Client
+     */
+    private $predisClient = null;
+
+    /**
      * saves already created loggers
      *
      * @var array
@@ -38,7 +44,7 @@ class Factory
 
     /**
      * Creates a single Monolog\Logger object depend on assigned logger name
-     * and configuration. Created loggers are cached for multiusage.
+     * and configuration. Created loggers are cached for multi-usage.
      *
      * @throws MonologCreator\Exception
      */
@@ -76,7 +82,8 @@ class Factory
         $handlerFactory   = new MonologCreator\Factory\Handler(
             $this->config,
             $this->levels,
-            $formatterFactory
+            $formatterFactory,
+            $this->predisClient
         );
 
         foreach ($loggerConfig['handler'] as $handlerType) {
@@ -173,5 +180,10 @@ class Factory
         }
 
         return $loggerConfig;
+    }
+
+    public function setPredisClient(\Predis\Client $predisClient): void
+    {
+        $this->predisClient = $predisClient;
     }
 }

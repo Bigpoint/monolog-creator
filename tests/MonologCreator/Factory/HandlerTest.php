@@ -137,7 +137,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
         $factory = new Handler(
             $config,
             array(
-                'INFO' => Monolog\Logger::INFO,
+                'INFO' => Monolog\Level::Info,
             ),
             $this->mockFormatterFactory
         );
@@ -207,7 +207,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
                 [
                     $config,
                     array(
-                        'INFO' => Monolog\Logger::INFO,
+                        'INFO' => Monolog\Level::Info,
                     ),
                     $this->mockFormatterFactory,
                 ]
@@ -259,7 +259,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
         $factory = new Handler(
             $config,
             array(
-                'INFO' => Monolog\Logger::INFO,
+                'INFO' => Monolog\Level::Info,
             ),
             $this->mockFormatterFactory
         );
@@ -276,31 +276,12 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCreateRedisFailNoUrl()
-    {
-        $config = json_decode(
-            '{
-                "handler" : {
-                    "redis" : {}
-                }
-            }',
-            true
-        );
-
-        $this->expectException(\MonologCreator\Exception::class);
-        $this->expectExceptionMessage('url configuration for redis handler is missing');
-
-        $factory = new Handler($config, array(), $this->mockFormatterFactory);
-        $factory->create('redis', 'INFO');
-    }
-
     public function testCreateRedisFailNoKey()
     {
         $config = json_decode(
             '{
                 "handler" : {
                     "redis" : {
-                        "url" : "mockUrl"
                     }
                 }
             }',
@@ -314,13 +295,12 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
         $factory->create('redis', 'INFO');
     }
 
-    public function testCreateRedis()
+    public function testCreateRedisNoObject()
     {
         $config = json_decode(
             '{
                 "handler" : {
                     "redis" : {
-                        "url" : "mockUrl",
                         "key" : "mockKey"
                     }
                 }
@@ -328,24 +308,36 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             true
         );
 
-        $factory = $this->getMockBuilder('\MonologCreator\Factory\Handler')
-            ->setConstructorArgs(
-                [
-                    $config,
-                    array(
-                        'INFO' => Monolog\Logger::INFO,
-                    ),
-                    $this->mockFormatterFactory,
-                ]
-            )
-            ->setMethods(['createPredisClient'])
-            ->getMock();
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('predis client object is not set');
 
-        $factory->expects($this->exactly(1))
-            ->method('createPredisClient')
-            ->with($this->equalTo('mockUrl'))
-            ->will($this->returnValue($this->mockPredisClient));
-
+        $factory = new Handler($config, array(), $this->mockFormatterFactory);
         $factory->create('redis', 'INFO');
+    }
+
+    public function testCreateRedis()
+    {
+        $config = json_decode(
+            '{
+                "handler" : {
+                    "redis" : {
+                        "key" : "mockKey"
+                    }
+                }
+            }',
+            true
+        );
+
+        $factory      = new Handler(
+            $config,
+            array(
+                'INFO' => Monolog\Level::Info,
+            ),
+            $this->mockFormatterFactory,
+            new \Predis\Client('')
+        );
+        $redisHandler = $factory->create('redis', 'INFO');
+
+        $this->assertInstanceOf(Monolog\Handler\RedisHandler::class, $redisHandler);
     }
 }
