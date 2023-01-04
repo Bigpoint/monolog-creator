@@ -100,7 +100,7 @@ $logger->addDebug('I am a debug message');
 You can configure log output with a formatter
 
 **config.json**
-~~~ logstash
+~~~ json
 {
     "handler" : {
         "stream" : {

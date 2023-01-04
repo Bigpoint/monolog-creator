@@ -25,13 +25,13 @@ class Udp extends \Monolog\Handler\AbstractProcessingHandler
         $lines = $this->splitMessageIntoLines($record->formatted);
 
         foreach ($lines as $line) {
-            $this->_socket->write($line);
+            $this->socket->write($line);
         }
     }
 
     public function close(): void
     {
-        $this->_socket->close();
+        $this->socket->close();
     }
 
     private function splitMessageIntoLines(mixed $message): array
@@ -45,6 +45,6 @@ class Udp extends \Monolog\Handler\AbstractProcessingHandler
 
     public function setSocket(\Monolog\Handler\SyslogUdp\UdpSocket $socket): void
     {
-        $this->_socket = $socket;
+        $this->socket = $socket;
     }
 }

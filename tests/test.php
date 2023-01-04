@@ -5,13 +5,28 @@ require __DIR__ . '/../vendor/autoload.php';
 $config = [
     'handler' => [
         'stream' => [
-            'path' => 'php://stdout',
+            'path'      => 'php://stdout',
+            // 'formatter' => 'json',
+        ],
+        'udp' => [
+            'host'      => 'localhost',
+            'port'      => '9999',
+            'formatter' => 'logstash'
+        ]
+    ],
+    'formatter' => [
+        'json'     => [],
+        'logstash' => [
+            'type' => 'app-dev'
         ],
     ],
     'logger' => [
         '_default' => [
-            'handler' => ['stream'],
-            'level'   => 'DEBUG',
+            'handler'   => [
+                'stream',
+                // 'udp',
+            ],
+            'level'     => 'DEBUG',
         ],
     ]
 ];
