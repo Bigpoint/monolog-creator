@@ -6,53 +6,21 @@ use MonologCreator;
 use Monolog;
 
 /**
- * Class Handler
- *
  * @package MonologCreator\Factory
  */
 class Handler
 {
-    /**
-     * @var array
-     */
-    private $config = array();
-
-    /**
-     * @var array
-     */
-    private $levels = array();
-
-    /**
-     * @var MonologCreator\Factory\Formatter
-     */
-    private $formatterFactory = null;
-
-    /**
-     * @param array     $config
-     * @param array     $levels
-     * @param Formatter $formatterFactory
-     */
     public function __construct(
-        array $config,
-        array $levels,
-        MonologCreator\Factory\Formatter $formatterFactory
+        private array $config,
+        private array $levels,
+        private MonologCreator\Factory\Formatter $formatterFactory
     ) {
-        $this->config           = $config;
-        $this->levels           = $levels;
-        $this->formatterFactory = $formatterFactory;
     }
 
     /**
-     * creates specific monolog handlers
-     *
-     * @param string $handlerType
-     * @param string $level
-     *
-     * @return Monolog\Handler\HandlerInterface
-     *
      * @throws MonologCreator\Exception
      */
-    public function create($handlerType, $level)
+    public function create(string $handlerType, string $level): Monolog\Handler\HandlerInterface
     {
         if (false === array_key_exists('handler', $this->config)) {
             throw new MonologCreator\Exception(
@@ -94,14 +62,9 @@ class Handler
     }
 
     /**
-     * @param  array  $handlerConfig
-     * @param  string $level
-     *
-     * @return Monolog\Handler\StreamHandler
-     *
      * @throws MonologCreator\Exception
      */
-    private function createStreamHandler(array $handlerConfig, $level)
+    private function createStreamHandler(array $handlerConfig, string $level): Monolog\Handler\StreamHandler
     {
         if (false === array_key_exists('path', $handlerConfig)) {
             throw new MonologCreator\Exception(
@@ -116,14 +79,9 @@ class Handler
     }
 
     /**
-     * @param  array  $handlerConfig
-     * @param  string $level
-     *
-     * @return MonologCreator\Handler\Udp
-     *
      * @throws MonologCreator\Exception
      */
-    private function createUdpHandler(array $handlerConfig, $level)
+    private function createUdpHandler(array $handlerConfig, string $level): MonologCreator\Handler\Udp
     {
         if (false === array_key_exists('host', $handlerConfig)) {
             throw new MonologCreator\Exception(
@@ -147,14 +105,11 @@ class Handler
     }
 
     /**
-     * @param  string $host
-     * @param  int    $port
-     *
      * @return Monolog\Handler\SyslogUdp\UdpSocket
      *
      * @codeCoverageIgnore
      */
-    protected function createUdpSocket($host, $port)
+    protected function createUdpSocket(string $host, int $port): Monolog\Handler\SyslogUdp\UdpSocket
     {
         return new Monolog\Handler\SyslogUdp\UdpSocket(
             $host,
@@ -163,14 +118,9 @@ class Handler
     }
 
     /**
-     * @param array  $handlerConfig
-     * @param string $level
-     *
-     * @return Monolog\Handler\RedisHandler
-     *
      * @throws MonologCreator\Exception
      */
-    private function createRedisHandler(array $handlerConfig, $level)
+    private function createRedisHandler(array $handlerConfig, string $level): Monolog\Handler\RedisHandler
     {
         if (false === array_key_exists('url', $handlerConfig)) {
             throw new MonologCreator\Exception(
@@ -192,13 +142,9 @@ class Handler
     }
 
     /**
-     * @param string $url
-     *
-     * @return \Predis\Client
-     *
      * @codeCoverageIgnore
      */
-    protected function createPredisClient($url)
+    protected function createPredisClient(string $url): \Predis\Client
     {
         return new \Predis\Client($url);
     }

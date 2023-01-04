@@ -234,7 +234,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->expectException(\MonologCreator\Exception::class);
-        $this->expectExceptionMessage('no level configurated for logger: test');
+        $this->expectExceptionMessage('no level configured for logger: test');
 
         $factory = new Factory($config);
         $factory->createLogger('test');

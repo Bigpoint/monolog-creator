@@ -20,9 +20,6 @@ class Udp extends \Monolog\Handler\AbstractProcessingHandler
         parent::__construct($level, $bubble);
     }
 
-    /**
-     * @param array $record
-     */
     protected function write(\Monolog\LogRecord $record): void
     {
         $lines = $this->splitMessageIntoLines($record->formatted);

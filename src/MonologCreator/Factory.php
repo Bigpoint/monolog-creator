@@ -6,55 +6,43 @@ use MonologCreator;
 use Monolog;
 
 /**
- * Factory class to for creating monolog loggers with preconfigurated array
+ * Factory class to for creating monolog loggers with pre-configured array
  */
 class Factory
 {
     /**
      * @var array
      */
-    private $config = array();
-
-    /**
-     * @var array
-     */
-    private $levels = array(
-        'DEBUG'     => Monolog\Logger::DEBUG,
-        'INFO'      => Monolog\Logger::INFO,
-        'NOTICE'    => Monolog\Logger::NOTICE,
-        'WARNING'   => Monolog\Logger::WARNING,
-        'ERROR'     => Monolog\Logger::ERROR,
-        'CRITICAL'  => Monolog\Logger::CRITICAL,
-        'ALERT'     => Monolog\Logger::ALERT,
-        'EMERGENCY' => Monolog\Logger::EMERGENCY,
-    );
+    private $levels = [
+        'DEBUG'     => Monolog\Level::Debug,
+        'INFO'      => Monolog\Level::Info,
+        'NOTICE'    => Monolog\Level::Notice,
+        'WARNING'   => Monolog\Level::Warning,
+        'ERROR'     => Monolog\Level::Error,
+        'CRITICAL'  => Monolog\Level::Critical,
+        'ALERT'     => Monolog\Level::Alert,
+        'EMERGENCY' => Monolog\Level::Emergency,
+    ];
 
     /**
      * saves already created loggers
      *
      * @var array
      */
-    private $logger = array();
+    private $logger = [];
 
-    /**
-     * @param array $config
-     */
-    public function __construct(array $config)
-    {
-        $this->config = $config;
+    public function __construct(
+        private array $config
+    ) {
     }
 
     /**
      * Creates a single Monolog\Logger object depend on assigned logger name
      * and configuration. Created loggers are cached for multiusage.
      *
-     * @param string $name
-     *
-     * @return Monolog\Logger
-     *
      * @throws MonologCreator\Exception
      */
-    public function createLogger($name)
+    public function createLogger(string $name): Monolog\Logger
     {
         // short circuit for cached logger objects
         if (true === array_key_exists($name, $this->logger)) {
@@ -77,15 +65,11 @@ class Factory
     }
 
     /**
-     * @param array $loggerConfig
-     *
-     * @return array
-     *
      * @throws MonologCreator\Exception
      */
-    public function createHandlers(array $loggerConfig)
+    public function createHandlers(array $loggerConfig): array
     {
-        $handlers         = array();
+        $handlers         = [];
         $formatterFactory = new MonologCreator\Factory\Formatter(
             $this->config
         );
@@ -106,15 +90,11 @@ class Factory
     }
 
     /**
-     * @param array $loggerConfig
-     *
-     * @return array
-     *
      * @throws MonologCreator\Exception
      */
-    public function createProcessors(array $loggerConfig)
+    public function createProcessors(array $loggerConfig): array
     {
-        $processors = array();
+        $processors = [];
 
         if (
             false === array_key_exists('processors', $loggerConfig)
@@ -154,13 +134,9 @@ class Factory
     }
 
     /**
-     * @param string $name
-     *
-     * @return array
-     *
      * @throws MonologCreator\Exception
      */
-    private function getLoggerConfig($name)
+    private function getLoggerConfig(string $name): array
     {
         if (false === array_key_exists('logger', $this->config)) {
             throw new MonologCreator\Exception("no logger configuration found");
@@ -180,13 +156,13 @@ class Factory
 
         if (false === array_key_exists('handler', $loggerConfig)) {
             throw new MonologCreator\Exception(
-                "no handler configurated for logger: " . $name
+                "no handler configured for logger: " . $name
             );
         }
 
         if (false === array_key_exists('level', $loggerConfig)) {
             throw new MonologCreator\Exception(
-                "no level configurated for logger: " . $name
+                "no level configured for logger: " . $name
             );
         }
 

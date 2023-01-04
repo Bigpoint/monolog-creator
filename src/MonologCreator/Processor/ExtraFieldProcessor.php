@@ -3,8 +3,6 @@
 namespace MonologCreator\Processor;
 
 /**
- * Class ExtraFieldProcessor
- *
  * Allows adding additional high-level or special fields to the log output.
  *
  * @package MonologCreator\Processor

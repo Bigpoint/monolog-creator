@@ -15,7 +15,7 @@ class FormatterTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage('no formatter configuration found');
 
         $factory = new Formatter(array());
-        $factory->create('mockFomatter');
+        $factory->create('mockFormatter');
     }
 
     public function testCreateFailNoConfigurationForFormatter()
@@ -32,10 +32,10 @@ class FormatterTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->expectException(\MonologCreator\Exception::class);
-        $this->expectExceptionMessage('no formatter configuration found for formatterType: mockFomatter');
+        $this->expectExceptionMessage('no formatter configuration found for formatterType: mockFormatter');
 
         $factory = new Formatter($config);
-        $factory->create('mockFomatter');
+        $factory->create('mockFormatter');
     }
 
     public function testCreateFailNotSupportedFormatter()
@@ -43,7 +43,7 @@ class FormatterTest extends \PHPUnit\Framework\TestCase
         $config = json_decode(
             '{
                 "formatter" : {
-                    "mockFomatter" : {
+                    "mockFormatter" : {
                         "type" : "test"
                     }
                 }
@@ -52,10 +52,10 @@ class FormatterTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->expectException(\MonologCreator\Exception::class);
-        $this->expectExceptionMessage('formatter type: mockFomatter is not supported');
+        $this->expectExceptionMessage('formatter type: mockFormatter is not supported');
 
         $factory = new Formatter($config);
-        $factory->create('mockFomatter');
+        $factory->create('mockFormatter');
     }
 
     public function testCreateLogstashFailNoTypeConfiguration()
@@ -70,7 +70,7 @@ class FormatterTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->expectException(\MonologCreator\Exception::class);
-        $this->expectExceptionMessage('type configuration for logstash foramtter is missing');
+        $this->expectExceptionMessage('type configuration for logstash formatter is missing');
 
         $factory = new Formatter($config);
         $factory->create('logstash');

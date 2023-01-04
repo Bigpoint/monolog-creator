@@ -6,33 +6,18 @@ use MonologCreator;
 use Monolog;
 
 /**
- * Class Formatter
- *
  * @package MonologCreator\Factory
  */
 class Formatter
 {
-    /**
-     * @var array
-     */
-    private $config = array();
-
-    /**
-     * @param array $config
-     */
-    public function __construct(array $config)
+    public function __construct(private array $config)
     {
-        $this->config = $config;
     }
 
     /**
-     * @param  string $formatterType
-     *
-     * @return Monolog\Formatter\FormatterInterface
-     *
      * @throws MonologCreator\Exception
      */
-    public function create($formatterType)
+    public function create(string $formatterType): Monolog\Formatter\FormatterInterface
     {
         if (false === array_key_exists('formatter', $this->config)) {
             throw new MonologCreator\Exception(
@@ -67,17 +52,13 @@ class Formatter
     }
 
     /**
-     * @param  array $formatterConfig
-     *
-     * @return Monolog\Formatter\LogstashFormatter
-     *
      * @throws MonologCreator\Exception
      */
-    private function createLogstash(array $formatterConfig)
+    private function createLogstash(array $formatterConfig): Monolog\Formatter\LogstashFormatter
     {
         if (false === array_key_exists('type', $formatterConfig)) {
             throw new MonologCreator\Exception(
-                'type configuration for logstash foramtter is missing'
+                'type configuration for logstash formatter is missing'
             );
         }
 
@@ -89,17 +70,12 @@ class Formatter
         );
     }
 
-    /**
-     * @param array $formatterConfig
-     *
-     * @return Monolog\Formatter\LineFormatter
-     */
-    private function createLine(array $formatterConfig)
+    private function createLine(array $formatterConfig): Monolog\Formatter\LineFormatter
     {
-        $boolValues = array(
+        $boolValues = [
             'true'  => true,
             'false' => false,
-        );
+        ];
 
         $format = null;
         if (true === array_key_exists('format', $formatterConfig)) {
@@ -143,12 +119,7 @@ class Formatter
         return $formatter;
     }
 
-    /**
-     * @param array $formatterConfig
-     *
-     * @return Monolog\Formatter\JsonFormatter
-     */
-    private function createJson(array $formatterConfig)
+    private function createJson(array $formatterConfig): Monolog\Formatter\JsonFormatter
     {
         return new Monolog\Formatter\JsonFormatter();
     }

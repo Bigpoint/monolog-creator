@@ -14,13 +14,8 @@ class RequestId
 
     /**
      * Called by Monolog - Allows processors to manipulate data.
-     *
-     *
-     * @param  array $record    The record to log
-     *
-     * @return array            The updated record to log
      */
-    public function __invoke(array $record)
+    public function __invoke(array $record): array
     {
         if (true === empty($this->uuid)) {
             $this->uuid = $this->generateUUID();
@@ -32,10 +27,8 @@ class RequestId
 
     /**
      * Generate a valid UUIDv4 utilizing the system´s available (P)RNGs.
-     *
-     * @return string valid UUIDv4
      */
-    protected function generateUUID()
+    protected function generateUUID(): string
     {
         $data = null;
         switch (true) {
@@ -57,38 +50,27 @@ class RequestId
 
     /**
      * Proxy around random_bytes
-     *
-     * @param $amt int
-     *
-     * @return string
      * @codeCoverageIgnore
      */
-    protected function randomBytes($amt)
+    protected function randomBytes(int $amt): string
     {
         return random_bytes($amt);
     }
 
     /**
      * Proxy around openssl_random_pseudo_bytes
-     *
-     * @param $amt int
-     *
-     * @return string
      * @codeCoverageIgnore
      */
-    protected function opensslRandomPseudoBytes($amt)
+    protected function opensslRandomPseudoBytes(int $amt): string
     {
         return openssl_random_pseudo_bytes($amt);
     }
 
     /**
      * Generate n Bytes with mt_rand
-     *
-     * @param $amt int
-     *
      * @return string
      */
-    protected function generateBytesWithMtRand($amt)
+    protected function generateBytesWithMtRand(int $amt): string
     {
         $tmp = array();
 
@@ -101,27 +83,20 @@ class RequestId
 
     /**
      * Proxy around mt_rand
-     *
-     * @param $min int
-     * @param $max int
-     *
-     * @return int
      * @codeCoverageIgnore
      */
-    protected function mtRand($min, $max)
+    protected function mtRand(int $min, int $max): int
     {
         return mt_rand($min, $max);
     }
 
     /**
-     * Proxy around is_callabe
+     * Proxy around is_callable
      *
      * @param $callable
-     *
-     * @return bool
      * @codeCoverageIgnore
      */
-    protected function isCallable($callable)
+    protected function isCallable($callable): bool
     {
         return is_callable($callable);
     }
@@ -133,11 +108,11 @@ class RequestId
      * xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
      * where x is 0-9, A-F and y is 8-9, A-B.
      *
-     * @param $data     string  random bytes.
+     * @param string $data - random bytes.
      *
-     * @return string           valid, formatted UUIDv4
+     * @return string - valid, formatted UUIDv4
      */
-    private function generateUUIDFromData($data)
+    private function generateUUIDFromData(string $data): string
     {
         $data = substr($data, 0, 16);
 
