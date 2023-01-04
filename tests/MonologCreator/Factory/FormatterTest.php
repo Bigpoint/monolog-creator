@@ -50,7 +50,7 @@ class FormatterTest extends \PHPUnit\Framework\TestCase
             }',
             true
         );
-        
+
         $this->expectException(\MonologCreator\Exception::class);
         $this->expectExceptionMessage('formatter type: mockFomatter is not supported');
 

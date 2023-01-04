@@ -9,7 +9,6 @@ namespace MonologCreator\Processor;
  */
 class RequestIdTest extends \PHPUnit\Framework\TestCase
 {
-
     public function testInvoke()
     {
         $subject = new RequestId();
@@ -120,7 +119,7 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
-        
+
         $subject->expects($this->exactly(3))
         ->method('isCallable')
         ->withConsecutive(
@@ -154,7 +153,7 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
                 )
                 ->disableOriginalConstructor()
                 ->getMock();
-        
+
         $subject->expects($this->exactly(3))
         ->method('isCallable')
         ->withConsecutive(

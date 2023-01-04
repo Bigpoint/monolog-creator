@@ -14,7 +14,8 @@ class ExtraFieldProcessor implements \Monolog\Processor\ProcessorInterface
 {
     public function __construct(
         private array $extraFields = array()
-    ) {}
+    ) {
+    }
 
     /**
      * Adds extra fields to the record.
