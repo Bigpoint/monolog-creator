@@ -15,12 +15,12 @@ class RequestId
     /**
      * Called by Monolog - Allows processors to manipulate data.
      */
-    public function __invoke(array $record): array
+    public function __invoke(\Monolog\LogRecord $record): \Monolog\LogRecord
     {
         if (true === empty($this->uuid)) {
             $this->uuid = $this->generateUUID();
         }
-        $record['extra']['request_id'] = $this->uuid;
+        $record->extra['request_id'] = $this->uuid;
 
         return $record;
     }

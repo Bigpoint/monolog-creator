@@ -12,21 +12,32 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
     public function testInvoke()
     {
         $subject = new RequestId();
-        $record  = array('extra' => array());
+        $record  = new \Monolog\LogRecord(
+            new \DateTimeImmutable(),
+            'testChannel',
+            \Monolog\Level::Debug,
+            'testMessage',
+        );
+
         $actual  = $subject->__invoke($record);
-        $this->assertTrue(\array_key_exists('request_id', $actual['extra']));
+        $this->assertTrue(\array_key_exists('request_id', $actual->extra));
     }
 
     public function testMultipleInvokesHaveSameID()
     {
         $subject = new RequestId();
-        $record  = array('extra' => array());
+        $record  = new \Monolog\LogRecord(
+            new \DateTimeImmutable(),
+            'testChannel',
+            \Monolog\Level::Debug,
+            'testMessage',
+        );
         $actual1 = $subject->__invoke($record);
         $actual2 = $subject->__invoke($record);
-        $this->assertTrue(\array_key_exists('request_id', $actual1['extra']));
+        $this->assertTrue(\array_key_exists('request_id', $actual1->extra));
         $this->assertSame(
-            $actual1['extra']['request_id'],
-            $actual2['extra']['request_id']
+            $actual1->extra['request_id'],
+            $actual2->extra['request_id']
         );
     }
 
@@ -38,9 +49,14 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
     public function testGeneratedUUIDValid()
     {
         $subject = new RequestId();
-        $record  = array('extra' => array());
+        $record  = new \Monolog\LogRecord(
+            new \DateTimeImmutable(),
+            'testChannel',
+            \Monolog\Level::Debug,
+            'testMessage',
+        );
         $actual  = $subject->__invoke($record);
-        $UUID    = $actual['extra']['request_id'];
+        $UUID    = $actual->extra['request_id'];
         $this->assertTrue(
             1 === \preg_match(
                 '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
@@ -72,7 +88,13 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
 
-        $subject->__invoke(array('extra' => array()));
+        $record  = new \Monolog\LogRecord(
+            new \DateTimeImmutable(),
+            'testChannel',
+            \Monolog\Level::Debug,
+            'testMessage',
+        );
+        $subject->__invoke($record);
     }
 
     public function testgenerateUUIDWithOpenSSLRandomPseudoBytes()
@@ -104,7 +126,13 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
 
-        $subject->__invoke(array('extra' => array()));
+        $record  = new \Monolog\LogRecord(
+            new \DateTimeImmutable(),
+            'testChannel',
+            \Monolog\Level::Debug,
+            'testMessage',
+        );
+        $subject->__invoke($record);
     }
 
     public function testgenerateUUIDWithMtRand()
@@ -138,7 +166,14 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
             ->with($this->equalTo(16))
             ->willReturn('abcdefgh12345678');
 
-        $subject->__invoke(array('extra' => array()));
+        $record  = new \Monolog\LogRecord(
+            new \DateTimeImmutable(),
+            'testChannel',
+            \Monolog\Level::Debug,
+            'testMessage',
+        );
+
+        $subject->__invoke($record);
     }
 
     public function testgenerateUUIDWithoutRNG()
@@ -167,7 +202,14 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
             false
         );
 
-        $subject->__invoke(array('extra' => array()));
+        $record  = new \Monolog\LogRecord(
+            new \DateTimeImmutable(),
+            'testChannel',
+            \Monolog\Level::Debug,
+            'testMessage',
+        );
+
+        $subject->__invoke($record);
     }
 
     public function testgenerateBytesWithMtRand()
@@ -201,6 +243,13 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
             ->with($this->equalTo(0), $this->equalTo(255))
             ->willReturn(97);
 
-        $subject->__invoke(array('extra' => array()));
+        $record  = new \Monolog\LogRecord(
+            new \DateTimeImmutable(),
+            'testChannel',
+            \Monolog\Level::Debug,
+            'testMessage',
+        );
+
+        $subject->__invoke($record);
     }
 }
