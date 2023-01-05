@@ -8,7 +8,7 @@ namespace MonologCreator\Processor;
  * @package MonologCreator\Processor
  * @author Sebastian Götze <s.goetze@bigpoint.net>
  */
-class ExtraFieldProcessor implements \Monolog\Processor\ProcessorInterface
+class ExtraFields implements \Monolog\Processor\ProcessorInterface
 {
     public function __construct(
         private array $extraFields = array()

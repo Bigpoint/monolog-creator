@@ -8,7 +8,7 @@ namespace MonologCreator\Processor;
  * @package MonologCreator\Processor
  * @author Sebastian Götze <s.goetze@bigpoint.net>
  */
-class ExtraFieldProcessorTest extends \PHPUnit\Framework\TestCase
+class ExtraFieldTest extends \PHPUnit\Framework\TestCase
 {
     public function testInvoke()
     {
@@ -16,7 +16,7 @@ class ExtraFieldProcessorTest extends \PHPUnit\Framework\TestCase
             'test_field' => 'test'
         );
 
-        $subject = new ExtraFieldProcessor($fields);
+        $subject = new ExtraFields($fields);
         $record  = new \Monolog\LogRecord(
             new \DateTimeImmutable(),
             'testChannel',
