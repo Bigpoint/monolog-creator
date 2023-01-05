@@ -24,9 +24,14 @@ $config = [
         '_default' => [
             'handler'   => [
                 'stream',
-                // 'udp',
+                'udp',
             ],
-            'level'     => 'DEBUG',
+            "processors"  => ["requestId", "extraFields"],
+            "extraFields" => [
+                "extra_key1" => "extra_value1",
+                "extra_key2" => "extra_value2"
+            ],
+            'level' => 'DEBUG',
         ],
     ]
 ];
