@@ -12,6 +12,9 @@ $config = [
             'host'      => 'localhost',
             'port'      => '9999',
             'formatter' => 'logstash'
+        ],
+        'redis' => [
+            "key" => "php_logs",
         ]
     ],
     'formatter' => [
@@ -25,6 +28,7 @@ $config = [
             'handler'   => [
                 'stream',
                 'udp',
+                // 'redis',
             ],
             "processors"  => ["requestId", "extraFields"],
             "extraFields" => [
@@ -37,6 +41,9 @@ $config = [
 ];
 
 $loggerFactory = new \MonologCreator\Factory($config);
+// $predisClient  = new \Predis\Client('tcp://localhost:6379');
+// $loggerFactory->setPredisClient($predisClient);
+
 $logger = $loggerFactory->createLogger('test');
 
 \Monolog\ErrorHandler::register($logger);
