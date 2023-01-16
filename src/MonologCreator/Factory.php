@@ -26,7 +26,7 @@ class Factory
 
     /**
      * optional, only needed for the redis handler
-     * @param \Predis\Client
+     * @param \Predis\Client|null
      */
     private $predisClient = null;
 
