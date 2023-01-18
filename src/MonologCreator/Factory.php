@@ -11,20 +11,6 @@ use Monolog;
 class Factory
 {
     /**
-     * @var array
-     */
-    private $levels = [
-        'DEBUG'     => Monolog\Level::Debug,
-        'INFO'      => Monolog\Level::Info,
-        'NOTICE'    => Monolog\Level::Notice,
-        'WARNING'   => Monolog\Level::Warning,
-        'ERROR'     => Monolog\Level::Error,
-        'CRITICAL'  => Monolog\Level::Critical,
-        'ALERT'     => Monolog\Level::Alert,
-        'EMERGENCY' => Monolog\Level::Emergency,
-    ];
-
-    /**
      * optional, only needed for the redis handler
      * @param \Predis\Client|null
      */
@@ -81,7 +67,6 @@ class Factory
         );
         $handlerFactory   = new MonologCreator\Factory\Handler(
             $this->config,
-            $this->levels,
             $formatterFactory,
             $this->predisClient
         );
@@ -173,9 +158,9 @@ class Factory
             );
         }
 
-        if (false === array_key_exists($loggerConfig['level'], $this->levels)) {
+        if (false === in_array(strtoupper($loggerConfig['level']), \Monolog\Level::NAMES)) {
             throw new MonologCreator\Exception(
-                "invalid level: " . $loggerConfig['level']
+                "invalid level: " . strtoupper($loggerConfig['level'])
             );
         }
 

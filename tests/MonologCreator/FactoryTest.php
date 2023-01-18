@@ -256,7 +256,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->expectException(\MonologCreator\Exception::class);
-        $this->expectExceptionMessage('invalid level: mockLevel');
+        $this->expectExceptionMessage('invalid level: MOCKLEVEL');
 
         $factory = new Factory($config);
         $factory->createLogger('test');

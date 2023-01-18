@@ -12,7 +12,6 @@ class Handler
 {
     public function __construct(
         private array $config,
-        private array $levels,
         private MonologCreator\Factory\Formatter $formatterFactory,
         private \Predis\Client|null $predisClient = null
     ) {
@@ -75,7 +74,7 @@ class Handler
 
         return new Monolog\Handler\StreamHandler(
             $handlerConfig['path'],
-            $this->levels[$level]
+            \Monolog\Level::fromName($level)
         );
     }
 
@@ -101,7 +100,7 @@ class Handler
                 $handlerConfig['host'],
                 $handlerConfig['port']
             ),
-            $this->levels[$level]
+            \Monolog\Level::fromName($level)
         );
     }
 
@@ -138,7 +137,7 @@ class Handler
         return new Monolog\Handler\RedisHandler(
             $this->predisClient,
             $handlerConfig['key'],
-            $this->levels[$level]
+            \Monolog\Level::fromName($level)
         );
     }
 }
