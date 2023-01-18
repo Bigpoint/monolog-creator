@@ -149,17 +149,17 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
                 ->getMock();
 
         $subject->expects($this->exactly(3))
-        ->method('isCallable')
-        ->withConsecutive(
-            [$this->equalTo('random_bytes')],
-            [$this->equalTo('openssl_random_pseudo_bytes')],
-            [$this->equalTo('mt_rand')]
-        )
-        ->willReturnOnConsecutiveCalls(
-            false,
-            false,
-            true
-        );
+            ->method('isCallable')
+            ->withConsecutive(
+                [$this->equalTo('random_bytes')],
+                [$this->equalTo('openssl_random_pseudo_bytes')],
+                [$this->equalTo('mt_rand')]
+            )
+            ->willReturnOnConsecutiveCalls(
+                false,
+                false,
+                true
+            );
 
         $subject->expects($this->once())
             ->method('generateBytesWithMtRand')
@@ -190,17 +190,17 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
                 ->getMock();
 
         $subject->expects($this->exactly(3))
-        ->method('isCallable')
-        ->withConsecutive(
-            [$this->equalTo('random_bytes')],
-            [$this->equalTo('openssl_random_pseudo_bytes')],
-            [$this->equalTo('mt_rand')]
-        )
-        ->willReturnOnConsecutiveCalls(
-            false,
-            false,
-            false
-        );
+            ->method('isCallable')
+            ->withConsecutive(
+                [$this->equalTo('random_bytes')],
+                [$this->equalTo('openssl_random_pseudo_bytes')],
+                [$this->equalTo('mt_rand')]
+            )
+            ->willReturnOnConsecutiveCalls(
+                false,
+                false,
+                false
+            );
 
         $record  = new \Monolog\LogRecord(
             new \DateTimeImmutable(),
@@ -226,17 +226,17 @@ class RequestIdTest extends \PHPUnit\Framework\TestCase
                 ->getMock();
 
         $subject->expects($this->exactly(3))
-        ->method('isCallable')
-        ->withConsecutive(
-            [$this->equalTo('random_bytes')],
-            [$this->equalTo('openssl_random_pseudo_bytes')],
-            [$this->equalTo('mt_rand')]
-        )
-        ->willReturnOnConsecutiveCalls(
-            false,
-            false,
-            true
-        );
+            ->method('isCallable')
+            ->withConsecutive(
+                [$this->equalTo('random_bytes')],
+                [$this->equalTo('openssl_random_pseudo_bytes')],
+                [$this->equalTo('mt_rand')]
+            )
+            ->willReturnOnConsecutiveCalls(
+                false,
+                false,
+                true
+            );
 
         $subject->expects($this->exactly(16))
             ->method('mtRand')
