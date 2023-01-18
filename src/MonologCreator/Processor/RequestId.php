@@ -68,7 +68,6 @@ class RequestId
 
     /**
      * Generate n Bytes with mt_rand
-     * @return string
      */
     protected function generateBytesWithMtRand(int $amt): string
     {
@@ -93,7 +92,6 @@ class RequestId
     /**
      * Proxy around is_callable
      *
-     * @param $callable
      * @codeCoverageIgnore
      */
     protected function isCallable($callable): bool
@@ -108,9 +106,6 @@ class RequestId
      * xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
      * where x is 0-9, A-F and y is 8-9, A-B.
      *
-     * @param string $data - random bytes.
-     *
-     * @return string - valid, formatted UUIDv4
      */
     private function generateUUIDFromData(string $data): string
     {
