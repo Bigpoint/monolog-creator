@@ -73,13 +73,9 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     *
-     * @param string $configString
-     *
-     * @expectedException \MonologCreator\Exception
      * @dataProvider dataProviderCreateDefaultLoggerFail
      */
-    public function testCreateDefaultLoggerFail($configString)
+    public function testCreateDefaultLoggerFail(string $configString)
     {
         $config = json_decode($configString, true);
 
