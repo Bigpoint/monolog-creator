@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * simple file to test the libraries features manually
+ */
+
 require __DIR__ . '/../vendor/autoload.php';
 
 $config = [
