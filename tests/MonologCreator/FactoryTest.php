@@ -73,15 +73,13 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     *
-     * @param string $configString
-     *
-     * @expectedException \MonologCreator\Exception
      * @dataProvider dataProviderCreateDefaultLoggerFail
      */
-    public function testCreateDefaultLoggerFail($configString)
+    public function testCreateDefaultLoggerFail(string $configString)
     {
         $config = json_decode($configString, true);
+
+        $this->expectException(\MonologCreator\Exception::class);
 
         $loggerFactory = new Factory($config);
         $loggerFactory->createLogger('test');
@@ -139,7 +137,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
                     },
                     "test" : {
                         "handler" : ["stream"],
-                        "processors": ["web", "requestId", "extraField"],
+                        "processors": ["web", "requestId", "extraFields"],
                         "level" : "INFO"
                     }
                 }
@@ -160,15 +158,11 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
             $processors[1]
         );
         $this->assertInstanceOf(
-            '\MonologCreator\Processor\ExtraFieldProcessor',
+            '\MonologCreator\Processor\ExtraFields',
             $processors[2]
         );
     }
 
-    /**
-     * @expectedException \MonologCreator\Exception
-     * @expectedExceptionMessage processor type: mockProccessor is not supported
-     */
     public function testCreateLoggerWithProcessorFail()
     {
         $config = json_decode(
@@ -201,24 +195,22 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
         );
         $loggerName = 'test';
 
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('processor type: mockProccessor is not supported');
+
         $factory = new Factory($config);
         $factory->createLogger($loggerName);
     }
 
-    /**
-     * @expectedException \MonologCreator\Exception
-     * @expectedExceptionMessage no logger configuration found
-     */
     public function testCreateLoggerNoConfig()
     {
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('no logger configuration found');
+
         $factory = new Factory(array());
         $factory->createLogger('test');
     }
 
-    /**
-     * @expectedException \MonologCreator\Exception
-     * @expectedExceptionMessage no level configurated for logger: test
-     */
     public function testCreateLoggerNoLevel()
     {
         $config = json_decode(
@@ -237,14 +229,13 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
             true
         );
 
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('no level configured for logger: test');
+
         $factory = new Factory($config);
         $factory->createLogger('test');
     }
 
-    /**
-     * @expectedException \MonologCreator\Exception
-     * @expectedExceptionMessage invalid level: mockLevel
-     */
     public function testCreateLoggerInvalidLevel()
     {
         $config = json_decode(
@@ -263,6 +254,9 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
             }',
             true
         );
+
+        $this->expectException(\MonologCreator\Exception::class);
+        $this->expectExceptionMessage('invalid level: MOCKLEVEL');
 
         $factory = new Factory($config);
         $factory->createLogger('test');

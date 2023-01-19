@@ -6,55 +6,35 @@ use MonologCreator;
 use Monolog;
 
 /**
- * Factory class to for creating monolog loggers with preconfigurated array
+ * Factory class to for creating monolog loggers with pre-configured array
  */
 class Factory
 {
     /**
-     * @var array
+     * optional, only needed for the redis handler
+     * @param \Predis\Client|null
      */
-    private $config = array();
-
-    /**
-     * @var array
-     */
-    private $levels = array(
-        'DEBUG'     => Monolog\Logger::DEBUG,
-        'INFO'      => Monolog\Logger::INFO,
-        'NOTICE'    => Monolog\Logger::NOTICE,
-        'WARNING'   => Monolog\Logger::WARNING,
-        'ERROR'     => Monolog\Logger::ERROR,
-        'CRITICAL'  => Monolog\Logger::CRITICAL,
-        'ALERT'     => Monolog\Logger::ALERT,
-        'EMERGENCY' => Monolog\Logger::EMERGENCY,
-    );
+    private $predisClient = null;
 
     /**
      * saves already created loggers
      *
      * @var array
      */
-    private $logger = array();
+    private $logger = [];
 
-    /**
-     * @param array $config
-     */
-    public function __construct(array $config)
-    {
-        $this->config = $config;
+    public function __construct(
+        private array $config
+    ) {
     }
 
     /**
      * Creates a single Monolog\Logger object depend on assigned logger name
-     * and configuration. Created loggers are cached for multiusage.
-     *
-     * @param string $name
-     *
-     * @return Monolog\Logger
+     * and configuration. Created loggers are cached for multi-usage.
      *
      * @throws MonologCreator\Exception
      */
-    public function createLogger($name)
+    public function createLogger(string $name): Monolog\Logger
     {
         // short circuit for cached logger objects
         if (true === array_key_exists($name, $this->logger)) {
@@ -77,22 +57,18 @@ class Factory
     }
 
     /**
-     * @param array $loggerConfig
-     *
-     * @return array
-     *
      * @throws MonologCreator\Exception
      */
-    public function createHandlers(array $loggerConfig)
+    public function createHandlers(array $loggerConfig): array
     {
-        $handlers         = array();
+        $handlers         = [];
         $formatterFactory = new MonologCreator\Factory\Formatter(
             $this->config
         );
         $handlerFactory   = new MonologCreator\Factory\Handler(
             $this->config,
-            $this->levels,
-            $formatterFactory
+            $formatterFactory,
+            $this->predisClient
         );
 
         foreach ($loggerConfig['handler'] as $handlerType) {
@@ -106,15 +82,11 @@ class Factory
     }
 
     /**
-     * @param array $loggerConfig
-     *
-     * @return array
-     *
      * @throws MonologCreator\Exception
      */
-    public function createProcessors(array $loggerConfig)
+    public function createProcessors(array $loggerConfig): array
     {
-        $processors = array();
+        $processors = [];
 
         if (
             false === array_key_exists('processors', $loggerConfig)
@@ -132,7 +104,7 @@ class Factory
                 $processors[] = $webProcessor;
             } elseif ('requestId' === $processor) {
                 $processors[] = new Processor\RequestId();
-            } elseif ('extraField' === $processor) {
+            } elseif ('extraFields' === $processor) {
                 $extraFields = array();
 
                 if (
@@ -142,7 +114,7 @@ class Factory
                     $extraFields = $loggerConfig['extraFields'];
                 }
 
-                $processors[] = new Processor\ExtraFieldProcessor($extraFields);
+                $processors[] = new Processor\ExtraFields($extraFields);
             } else {
                 throw new MonologCreator\Exception(
                     'processor type: ' . $processor . ' is not supported'
@@ -154,13 +126,9 @@ class Factory
     }
 
     /**
-     * @param string $name
-     *
-     * @return array
-     *
      * @throws MonologCreator\Exception
      */
-    private function getLoggerConfig($name)
+    private function getLoggerConfig(string $name): array
     {
         if (false === array_key_exists('logger', $this->config)) {
             throw new MonologCreator\Exception("no logger configuration found");
@@ -180,22 +148,27 @@ class Factory
 
         if (false === array_key_exists('handler', $loggerConfig)) {
             throw new MonologCreator\Exception(
-                "no handler configurated for logger: " . $name
+                "no handler configured for logger: " . $name
             );
         }
 
         if (false === array_key_exists('level', $loggerConfig)) {
             throw new MonologCreator\Exception(
-                "no level configurated for logger: " . $name
+                "no level configured for logger: " . $name
             );
         }
 
-        if (false === array_key_exists($loggerConfig['level'], $this->levels)) {
+        if (false === in_array(strtoupper($loggerConfig['level']), \Monolog\Level::NAMES)) {
             throw new MonologCreator\Exception(
-                "invalid level: " . $loggerConfig['level']
+                "invalid level: " . strtoupper($loggerConfig['level'])
             );
         }
 
         return $loggerConfig;
+    }
+
+    public function setPredisClient(\Predis\Client $predisClient): void
+    {
+        $this->predisClient = $predisClient;
     }
 }
