@@ -1,5 +1,7 @@
 # Monolog-Creator
 
+**!!! This repository has been abandoned in favor of https://gitlab.com/Segaja/monolog-creator !!!**
+
 These classes provide a simple factory for creating pre-configured [monolog](https://github.com/Seldaek/monolog) logger objects.
 
 Monolog-Creator supports only a few handlers, formatters and processors of monolog at the moment. So feel free to extend the library.
