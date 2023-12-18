@@ -10,8 +10,11 @@
             "name": "Peter Ahrens"
         },
         {
-            "name": "Andreas Schleifer",
-            "email": "aschleifer@bigpoint.net"
+            "name": "Andreas Schleifer"
+        },
+        {
+            "name": "Haoxu Wang",
+            "email": "h.wang@bigpoint.net"
         }
     ],
     "support" : {
@@ -35,6 +38,5 @@
         "platform": {
             "php":"8.1"
         }
-    },
-    "abandoned": "segaja/monolog-creator"
+    }
 }
